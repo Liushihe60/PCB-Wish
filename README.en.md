@@ -23,9 +23,9 @@ The project is built on the ZCode desktop application. The domain plugin lives i
 
 The agent ties requirement clarification, component selection, schematic and PCB design, verification, and fabrication-file export into one flow, and produces an accompanying lecture when the user requests one.
 
-PCB-Wish was inspired by the full teaching process of the Engineering Innovation (工科创) course. The course already covers electronic design and board drawing, but does not yet teach the complete engineering practice from requirements to a finished board.
+PCB-Wish was inspired by the full teaching process of the Engineering Innovation (工科创) course. The course already covers electronic design and board drawing, but cannot cover everyone's needs and interests.
 
-I hope it can serve as an interest-expansion tool beyond the course, so that most classmates in the same department, after taking the course and gaining some electronics foundation, can use large-model tools to fully try building a board with a function they are interested in, learn numerical calculation, component selection, and other methods of electronic design, and carry out project-based learning on their own.
+I hope it can become an interest-driven learning tool, so that most classmates in the same department, after taking the course and gaining some electronics foundation, can use large-model tools to fully try building a board with a function they are interested in, learn numerical calculation, component selection, and other methods of electronic design, and carry out project-based learning on their own.
 
 Inspired by this, I hope to use today's rapidly developing large models to connect electronic design learning with projects that students are interested in. By developing this agent, I hope both to help students turn design ideas into working boards and to support their learning through the accompanying lecture. The system workflow comes from my complete board-fabrication process, and the project also tries to ground "AI + teaching and learning" in this process.
 
