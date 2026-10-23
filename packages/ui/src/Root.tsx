@@ -1558,12 +1558,13 @@ function RootInner({
       {remoteConnectionDialog}
       {directoryBrowserDialog}
       <OccupationOnboarding
+        disabled
         showWindowControls={Boolean(isWindowsDesktop || (isDesktop && !isMacDesktop))}
         showChildrenWhileLoading={!workspaceShellPath && isSettingsTabActive}
         isMacDesktop={isMacDesktop}
         isWindowsDesktop={isWindowsDesktop}
       >
-        {/* 新引导属于应用级偏好；无项目时也要挂载，才能响应设置页的手动打开请求。 */}
+        {/* PCB Wish 是 PCB 设计专用 Agent，不展示通用助手的工作方向/兴趣引导。 */}
         {!workspaceShellPath ? (
           isSettingsTabActive ? (
             <ScopedErrorBoundary

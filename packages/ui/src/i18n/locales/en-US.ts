@@ -6954,7 +6954,7 @@ const enUS: Record<string, string> = {
   "chat.error.collapseDetails": "Hide details",
   "chat.error.feedback": "Report issue",
   "chat.error.feedbackOpened": "Feedback opened with the error context attached",
-  "chat.error.noAvailableModel": "No model available. Upgrade or set a custom model.",
+  "chat.error.noAvailableModel": "No model is available. Configure a model service API key in Settings first.",
   "chat.error.remoteNoAvailableModel":
     "This remote device has no available model yet. Configure models on this computer first; they will sync to the remote device automatically after you save.",
   "chat.error.sendFailed": "Failed to send. Try again later.",

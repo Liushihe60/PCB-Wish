@@ -6618,7 +6618,7 @@ const zhCN: Record<string, string> = {
   "chat.error.collapseDetails": "收起详情",
   "chat.error.feedback": "反馈问题",
   "chat.error.feedbackOpened": "已打开反馈，并自动带上报错现场",
-  "chat.error.noAvailableModel": "当前没有可用模型。请开通编程套餐或配置自定义模型。",
+  "chat.error.noAvailableModel": "当前没有可用模型。请先在设置中配置模型服务 API Key。",
   "chat.error.remoteNoAvailableModel":
     "此远程设备尚无可用模型，请先在本机配置模型，保存后会自动同步到远程设备",
   "chat.error.sendFailed": "发送失败，请稍后重试。",

@@ -38,6 +38,7 @@ export function OccupationOnboarding({
   showChildrenWhileLoading = false,
   isMacDesktop,
   isWindowsDesktop,
+  disabled = false,
 }: {
   children: ReactNode;
   /** Windows/Linux 自绘窗控：引导全屏覆盖主界面（含标题栏），需在此补最小化/最大化/关闭。 */
@@ -46,6 +47,8 @@ export function OccupationOnboarding({
   showChildrenWhileLoading?: boolean;
   isMacDesktop?: boolean;
   isWindowsDesktop?: boolean;
+  /** PCB Wish 是专用 Agent：关闭面向通用助手的职业/兴趣引导，组件行为留给测试与复用。 */
+  disabled?: boolean;
 }) {
   const { settings, update } = useSettings();
   const platform = usePlatform();
@@ -80,7 +83,8 @@ export function OccupationOnboarding({
     loadDeviceMid,
     update,
   });
-  const onboardingVisible = requested || (needsOnboarding === true && !dismissed);
+  const onboardingVisible =
+    !disabled && (requested || (needsOnboarding === true && !dismissed));
   const captureEnd = useOnboardingTelemetry({
     platform,
     visible:

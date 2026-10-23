@@ -29,6 +29,7 @@ import { logger } from "@/logger.js";
 import { renderOAuthProviderIcon } from "@/lib/oauthProviderIcon.js";
 import {
   buildLoginApiKeyDefaultModelPreferenceFromSelection,
+  buildLoginCustomModelConfig,
   normalizeLoginCustomBaseUrl,
   resolveLoginApiKeyDefaultProvider,
   resolveLoginApiKeyTemplateId,
@@ -105,14 +106,14 @@ export function LoginApiKeyForm({ onSaved, onSkip }: LoginApiKeyFormProps) {
           providerName: resolveLoginCustomProviderName(customBaseUrlNormalized),
           initialConfig: {
             access: { type: "api-key", apiKey },
-            api: { baseUrl: customBaseUrlNormalized },
+            api: { type: "openai-chat-completions", baseUrl: customBaseUrlNormalized },
           },
         });
         await providerSettingsService.addPersonalModel(
           created.providerId,
           customModelId.trim(),
-          { properties: { supportsToolCall: true } },
-          true,
+          buildLoginCustomModelConfig(),
+          false,
         );
         providerId = created.providerId;
       } else {

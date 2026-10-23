@@ -26,7 +26,6 @@ import {
 } from "react";
 import { Hand } from "lucide-react";
 import {
-  BUILTIN_MODEL_PROVIDER_IDS,
   buildCustomSupplierKey,
   isHighspeedProviderId,
   isRemoteWorkspaceIdentity,
@@ -5014,14 +5013,6 @@ export function SessionPane({
     setPendingSettingsSectionIntent("modelProvider");
     openSettingsTab();
   }, [openSettingsTab]);
-  const handleOpenModelUpgrade = useCallback(() => {
-    if (!codingPlanUpgradeDialog) return;
-    const providerId =
-      sharedSettings?.providerFamilyDomain === "bigmodel"
-        ? BUILTIN_MODEL_PROVIDER_IDS.bigmodelIndividualCodingPlan
-        : BUILTIN_MODEL_PROVIDER_IDS.zaiIndividualCodingPlan;
-    codingPlanUpgradeDialog.openCodingPlanUpgrade({ providerId });
-  }, [codingPlanUpgradeDialog, sharedSettings?.providerFamilyDomain]);
   const handleOpenQuotaUpgrade = useCallback(() => {
     const providerId = quotaBanner.upgradeProviderId;
     if (!providerId || !codingPlanUpgradeDialog) return;
@@ -5482,7 +5473,6 @@ export function SessionPane({
       onDismissError={handleDismissComposerError}
       onRetryInitialization={handleRetrySubscribe}
       onOpenModelSettings={handleOpenModelSettings}
-      onOpenModelUpgrade={handleOpenModelUpgrade}
       modelConfigTarget={modelConfigTarget}
       onOpenCodeViewer={onOpenCodeViewer}
       suppressGoalCommands={selectionSideChat}

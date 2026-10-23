@@ -156,7 +156,6 @@ function renderComposerWithError(
   message: string,
   actions: {
     onOpenModelSettings?: () => void;
-    onOpenModelUpgrade?: () => void;
     contextHeader?: ReactNode;
   } = {},
 ): string {
@@ -319,15 +318,13 @@ describe("ConversationComposer error banner", () => {
 
   it("forwards model recovery actions to the shared error banner", () => {
     const onOpenModelSettings = vi.fn();
-    const onOpenModelUpgrade = vi.fn();
 
     renderComposerWithError("No model", {
       onOpenModelSettings,
-      onOpenModelUpgrade,
     });
 
     expect(captured.chatErrorBannerProps?.onOpenModelSettings).toBe(onOpenModelSettings);
-    expect(captured.chatErrorBannerProps?.onOpenUpgrade).toBe(onOpenModelUpgrade);
+    expect(captured.chatErrorBannerProps?.onOpenUpgrade).toBeUndefined();
   });
 
   it("不再把 snapshot api retry 状态传入输入框工具条", () => {

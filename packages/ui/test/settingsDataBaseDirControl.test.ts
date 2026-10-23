@@ -204,7 +204,6 @@ async function renderGeneralSection(
       onAskUserQuestionAutoResolutionEnabledChange: vi.fn(async () => {}),
       onModelIoFullRetentionEnabledChange: vi.fn(async () => {}),
       onOptimizeAgentExperienceEnabledChange: vi.fn(async () => {}),
-      onOpenOnboardingDialog: vi.fn(),
       ...overrides,
     }),
   );

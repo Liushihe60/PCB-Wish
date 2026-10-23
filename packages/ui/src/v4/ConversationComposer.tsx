@@ -510,7 +510,6 @@ export interface ConversationComposerProps {
   onDismissError?: () => void;
   /** 无可用模型横幅的恢复动作；由 SessionPane 注入壳层导航，组件不直接操作 tab。 */
   onOpenModelSettings?: () => void;
-  onOpenModelUpgrade?: () => void;
   modelConfigTarget?: ChatErrorBannerModelConfigTarget;
   onOpenCodeViewer?: (source: CodeViewerSource) => void;
   /**
@@ -597,7 +596,6 @@ function ConversationComposerImpl({
   error,
   onDismissError,
   onOpenModelSettings,
-  onOpenModelUpgrade,
   modelConfigTarget = "local",
   onOpenCodeViewer,
   listenAddToChatEvents = true,
@@ -2570,7 +2568,6 @@ function ConversationComposerImpl({
             }
             onDismiss={onDismissError}
             onOpenModelSettings={onOpenModelSettings}
-            onOpenUpgrade={onOpenModelUpgrade}
             modelConfigTarget={modelConfigTarget}
           />
         </div>

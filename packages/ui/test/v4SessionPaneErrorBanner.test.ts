@@ -17,7 +17,6 @@ const projectionState = vi.hoisted(() => ({
 }));
 
 const captured = vi.hoisted(() => ({
-  onOpenModelUpgrade: null as (() => void) | null | undefined,
   modelConfigTarget: null as "local" | "remote" | null,
 }));
 
@@ -83,7 +82,6 @@ vi.mock("@/v4/ConversationComposer.js", async () => {
   return {
     ConversationComposer: ({
       error,
-      onOpenModelUpgrade,
       modelConfigTarget,
     }: {
       error?: {
@@ -92,10 +90,8 @@ vi.mock("@/v4/ConversationComposer.js", async () => {
         underlyingErrorMessage?: string;
         underlyingErrorDetail?: string;
       } | null;
-      onOpenModelUpgrade?: () => void;
       modelConfigTarget?: "local" | "remote";
     }) => {
-      captured.onOpenModelUpgrade = onOpenModelUpgrade;
       captured.modelConfigTarget = modelConfigTarget ?? null;
       return React.createElement(
         "div",
@@ -287,7 +283,7 @@ describe("SessionPane error banner wiring", () => {
     "remote:ssh:example.com:22:dev:/workspace",
     "remote:wsl:ubuntu:/workspace",
     "remote:docker:dev-box:/workspace",
-  ])("远程 workspace %s 缺模型时使用远端措辞并保留本机升级动作", (workspaceIdentity) => {
+  ])("远程 workspace %s 缺模型时使用远端措辞且只保留配置入口", (workspaceIdentity) => {
     projectionState.current = {
       status: "live",
       snapshot: makeSnapshot(),
@@ -299,7 +295,6 @@ describe("SessionPane error banner wiring", () => {
 
     renderPane(workspaceIdentity);
 
-    expect(typeof captured.onOpenModelUpgrade).toBe("function");
     expect(captured.modelConfigTarget).toBe("remote");
   });
 
@@ -315,7 +310,6 @@ describe("SessionPane error banner wiring", () => {
 
     renderPane();
 
-    expect(typeof captured.onOpenModelUpgrade).toBe("function");
     expect(captured.modelConfigTarget).toBe("local");
   });
 });

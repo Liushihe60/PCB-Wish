@@ -46,6 +46,28 @@ export function normalizeLoginCustomBaseUrl(value: string): string | null {
   }
 }
 
+// 自定义平台没有内置推荐配置，登录时必须写入手动模型允许的完整字段，其余执行字段由系统默认补齐。
+export function buildLoginCustomModelConfig() {
+  return {
+    enabled: true,
+    properties: {
+      contextWindow: 128_000,
+      supportsJsonSchemaOutput: true,
+      supportsNativeWebSearch: false,
+      supportsMidConversationSystem: false,
+      inputFormat: {
+        supportsImage: false,
+        supportsVideo: false,
+        supportsPdf: false,
+      },
+    },
+    optionSpecs: {
+      reasoningLevel: { values: ["disabled"], map: "{}" },
+      maxOutputTokens: { max: 8_192 },
+    },
+  } as const;
+}
+
 export function resolveLoginCustomProviderName(baseUrl: string): string {
   try {
     return new URL(baseUrl).hostname || "Custom";
