@@ -21,7 +21,7 @@ The project is built on the ZCode desktop application. The domain plugin lives i
 
 ## Background
 
-PCB-Wish was inspired by the full teaching process of the Engineering Innovation (工科创) course. The author hopes that most classmates in the same department, after taking the course and gaining some electronics foundation, can use large-model tools to fully try building a board with a function they are interested in, and learn numerical calculation, component selection, and other methods of electronic design in the process.
+PCB-Wish was inspired by the full teaching process of the Engineering Innovation (工科创) course. It does not replace the course content; rather, it is intended as an interest-expansion tool beyond the course, so that most classmates in the same department, after taking the course and gaining some electronics foundation, can use large-model tools to fully try building a board with a function they are interested in, learn numerical calculation, component selection, and other methods of electronic design, and carry out project-based learning on their own.
 
 The author therefore built this agent production tool, hoping to help classmates through engineering practice and the accompanying lecture. The system workflow comes from the author's complete board-fabrication process. The project also tries to ground "AI + teaching and learning" in this process: using large-model tools for engineering practice and the accompanying lecture to help students.
 
