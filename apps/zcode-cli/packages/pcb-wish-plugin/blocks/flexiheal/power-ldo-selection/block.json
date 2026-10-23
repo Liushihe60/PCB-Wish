@@ -1,0 +1,42 @@
+{
+  "id": "power-ldo-selection",
+  "name": "供电选择跳线（R7/R8）+ ME6217C33 LDO 3.3V",
+  "category": "power",
+  "status": "draft",
+  "source": {
+    "type": "reference-design",
+    "evidence": "代工任务书 §2.2 供电选择跳线段 + §3.7/§3.9 高危点 + §6.9 双跳线布线规则"
+  },
+  "topology": {
+    "description": "两颗 0Ω 跳线二选一供电：VBAT--R7-->VREG_IN / VBUS--R8-->VREG_IN（只画不贴，版本手焊：V1/V2 贴 R7，V3 贴 R8）；VREG_IN → ME6217C33 VIN（Cin 1µF，EN 接 VIN）→ VOUT=VDD（Cout 4.7µF×2 就近）",
+    "key_components": [
+      { "role": "sel-vbat", "value": "R7 0Ω 0402（只画不贴）", "fixed": true },
+      { "role": "sel-vbus", "value": "R8 0Ω 0402（只画不贴）", "fixed": true },
+      { "role": "ldo", "value": "ME6217C33M5G SOT23-5（VIN 上限须≥5.5V；备选 SGM2212-3.3 须确认后才能换）", "fixed": true }
+    ],
+    "key_nets": ["VBAT", "VBUS", "VREG_IN", "VDD", "GND"],
+    "formulas": []
+  },
+  "boundary_ports": [
+    { "name": "VBAT", "direction": "power-in", "net_hint": "电池路径输入（R7 侧）" },
+    { "name": "VBUS", "direction": "power-in", "net_hint": "USB 路径输入（R8 侧）" },
+    { "name": "VDD", "direction": "power-out", "net_hint": "3.3V 主轨" },
+    { "name": "GND", "direction": "ground", "net_hint": "" }
+  ],
+  "layout_constraints": [
+    "R7/R8 锚定在 LDO VIN 侧 2mm 内（§6.9）",
+    "R7/R8 两颗焊盘间禁止铺 VDD/VBAT/VBUS 同网铜皮连通两侧（§6.9 隐藏搭接风险）",
+    "Cout 4.7µF×2 就近 VOUT（§5.2）"
+  ],
+  "verification": {
+    "criteria": [
+      "§3.7 R7/R8 只画不贴，丝印标 V1/V2=R7、V3=R8",
+      "§3.9 ME6217C33 输入上限 ≥5.5V datasheet 核对",
+      "网表断言：VREG_IN 成员精确匹配（R7.2+R8.2+U3.VIN+C17.1）",
+      "SMT BOM 中无 R7/R8"
+    ],
+    "testbench": ""
+  },
+  "teaching_notes": "双跳线供电选择的可靠性考量（禁同网铜皮/锚定距离）、LDO 输入耐压与直馈场景",
+  "verified_in": ""
+}

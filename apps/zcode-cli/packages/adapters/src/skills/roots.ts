@@ -2,6 +2,7 @@ import { stat } from "node:fs/promises";
 import { homedir } from "node:os";
 import { basename, dirname, isAbsolute, join, resolve } from "node:path";
 import type { SkillRoot, SkillSource } from "@zcode/contracts";
+import { resolveAgentDataHome } from "../data-home.js";
 
 const GIT_MARKER = ".git";
 const HOME_PREFIX = "~/";
@@ -25,7 +26,7 @@ export async function resolveDefaultSkillRoots(
   const resolvedWorkingDirectory = resolve(workingDirectory);
   const roots: SkillRoot[] = [];
   const includeZcode = options.includeZcodeSkills ?? true;
-  const home = options.homeDirectory ?? homedir();
+  const home = options.homeDirectory ?? resolveAgentDataHome();
   let priority = 0;
   const nextPriority = () => {
     priority += PRIORITY_STEP;

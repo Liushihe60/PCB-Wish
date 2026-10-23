@@ -22,6 +22,7 @@ import { buildCurrentDateSection } from "./sections/current-date.js";
 import { buildMemorySection } from "./sections/memory.js";
 import { ACTIVE_PROJECT_MEMORY_RETRIEVAL_BRANCH } from "../memory/project-memory-retrieval-branch.js";
 import { buildDesktopContextSection } from "./sections/desktop.js";
+import { buildPcbWishSopSection } from "./sections/pcb-wish-sop.js";
 import {
   buildContextManagementSection,
   buildDynamicBehaviorSection,
@@ -120,6 +121,8 @@ export class ContextBuilder {
       sections.push(buildWorkflowActorIdentitySection(workflowActor));
     } else {
       sections.push(buildIdentitySection(activeOutputStyle));
+      // PCBWish 固定工序： 仅默认交互身份携带（customSystemPrompt/workflowActor 两条旁路不叠加，避免重复工序）。
+      sections.push(buildPcbWishSopSection());
     }
 
     // 3. Dynamic system context

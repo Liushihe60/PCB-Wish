@@ -1,0 +1,81 @@
+% main-demo.tex — 讲义模板最小演示（粒度样例，v2 教学化版式）
+% 编译: xelatex 连跑 2 次（目录/交叉引用）
+% 约定: 显式锚定中文字体（fontset 由 ElegantBook 的 lang=cn 关闭自动探测，
+%       此处手工指定，避免跨机漂移）；工作区路径含空格/中文时先拷贝到
+%       ASCII 临时目录再编译。
+%
+% v2 版式约定（甲方案，见 调研报告-教学讲义模板改进.md）：
+%   1) 只用 ElegantBook 内置教学环境 + 唯一自定义盒子 misconception，
+%      不再加新盒子（盒子通胀纪律）；
+%   2) 定理类盒子签名 \begin{definition}{名称}{标签}，引用 \ref{def:标签}
+%      （fancy 模式由 cls 定义，标签前缀：def/thm/pro）；
+%   3) 状态徽标一律用 \verified/\computed/\estimate/\notestablished，
+%      禁止再用括号文字裸写状态。
+\documentclass[11pt,lang=cn]{elegantbook}
+
+\usepackage{circuitikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{booktabs}
+
+% 只编号到 subsection（ElegantBook 默认把 paragraph 也编号，产生畸形编号）
+\setcounter{secnumdepth}{2}
+
+% 中文字体显式锚定（Windows 系统字体；跨机部署时改用 fandol）
+\setCJKmainfont{SimSun}
+\setCJKsansfont{SimHei}
+\setCJKmonofont{SimSun}
+
+% ---------- 状态徽标（四态标注 + 回链） ----------
+% VERIFIED=已验证(决策日志/验证记录可查)  COMPUTED=计算得出(计算书可复算)
+% ESTIMATE=估计(按范例/经验,未复算)       NOT ESTABLISHED=未建立(无出处,待补)
+\definecolor{statgreen}{RGB}{27,128,73}
+\definecolor{statblue}{RGB}{41,98,176}
+\definecolor{statorange}{RGB}{196,111,23}
+\definecolor{statred}{RGB}{158,58,58}
+% #1=底色  #2=状态名  #3=回链出处
+\newcommand{\statusbadge}[3]{%
+  \colorbox{#1}{\textcolor{white}{\sffamily\bfseries\footnotesize\,#2\,}}%
+  \hspace{0.3em}{\small\textcolor{black!60}{（#3）}}}
+\newcommand{\statusmark}[2]{%
+  \begingroup
+  \def\tmpst{#1}%
+  \def\tmpv{VERIFIED}\def\tmpc{COMPUTED}\def\tmpe{ESTIMATE}\def\tmpn{NOT ESTABLISHED}%
+  \ifx\tmpst\tmpv\statusbadge{statgreen}{VERIFIED}{#2}\else
+  \ifx\tmpst\tmpc\statusbadge{statblue}{COMPUTED}{#2}\else
+  \ifx\tmpst\tmpe\statusbadge{statorange}{ESTIMATE}{#2}\else
+  \ifx\tmpst\tmpn\statusbadge{statred}{NOT ESTABLISHED}{#2}\else
+  \textcolor{red}{[未知状态 #1]}\fi\fi\fi\fi
+  \endgroup}
+% 生成端请用下面四个语义命令，不要直接用 \statusmark
+\newcommand{\verified}[1]{\statusmark{VERIFIED}{#1}}
+\newcommand{\computed}[1]{\statusmark{COMPUTED}{#1}}
+\newcommand{\estimate}[1]{\statusmark{ESTIMATE}{#1}}
+\newcommand{\notestablished}[1]{\statusmark{NOT ESTABLISHED}{#1}}
+
+% ---------- 唯一的自定义盒子：常见错误警示 ----------
+% 固定三行式：错误做法 → 后果 → 正确做法（素材源：pitfalls.md 陷阱清单）
+\makeatletter
+\definecolor{miscred}{RGB}{150,42,37}
+\newtcolorbox{misconception}[1]{breakable, enhanced,
+  colback=miscred!6, colframe=miscred, boxrule=0.7pt, arc=1.2mm,
+  title={常见错误：#1}, fonttitle=\bfseries,
+  coltitle=white, colbacktitle=miscred}
+\makeatother
+
+\title{PCB 许愿式设计项目讲义（粒度样例）}
+\author{PCB-Wish 教学模块}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\input{sample-chapter-tps40200}
+
+\chapter*{总览章骨架（占位）}
+总览章内容见 template/overview-chapter.tex 骨架：需求→指标追溯表、电源树与信号流、
+板级布局策略、模块间接口、整体验证计划与结果汇总。（样例章审阅通过后补全）
+
+\end{document}

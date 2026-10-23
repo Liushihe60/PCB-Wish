@@ -1,0 +1,18 @@
+{
+  "$comment": "示例断言：演示 must_connect / must_not_connect / pin_count / net_exists。must_not_connect 模拟 pcb-skill 案例中 DRC=0 但静默短路的场景。",
+  "must_connect": [
+    { "name": "输入到芯片供电", "pins": ["J1.1", "U1.7"] },
+    { "name": "主输出连通", "pins": ["L1.2", "J2.1"] }
+  ],
+  "must_not_connect": [
+    { "name": "电源正与输出地不得短路（演示静默短路抓取）", "groups": [["J1.1"], ["J2.2"]] },
+    { "name": "功率地与模拟地在单点连接前不得混网", "groups": [["GND"], ["GND1"]] }
+  ],
+  "pin_count": [
+    { "net": "GND", "op": ">=", "count": 5, "name": "功率地成员数" }
+  ],
+  "net_exists": [
+    { "net": "GDRV", "exists": true, "name": "驱动网络存在" },
+    { "net": "GND_GND1_BRIDGE", "exists": false, "name": "不允许出现分地直连网络" }
+  ]
+}

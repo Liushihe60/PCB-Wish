@@ -1,0 +1,49 @@
+{
+  "id": "afe-flex-sensor",
+  "name": "柔性传感器模拟前端（分压→ADC）+ 旁路链 + LMV321 保险位",
+  "category": "sensing",
+  "status": "draft",
+  "source": {
+    "type": "reference-design",
+    "evidence": "代工任务书 §2.4 传感器模拟前端块 + §3.11-§3.14 高危点 + §6.2 ADC 链布线规则"
+  },
+  "topology": {
+    "description": "主链：VDD--R1 2.2k(1%)-->DIV--R2 1k-->ADC_IN（→P0.02/AIN0），C1 0.1µF（DIV→GND）、C2 100nF（ADC_IN→GND）；J2 = 2P 1.0mm 翻盖式 FPC 座（pin1=传感器→DIV，pin2=GND，必须金手指朝下方向款）；旁路链（P3 2.54-3P：OUT/GND/VBUS）：OUT--R4 100k-->DIV2--R5 100k-->GND，DIV2--R6 0Ω(DNP)-->ADC_IN（与传感器前端互斥）；LMV321 DNP 保险位画全网络（×23 增益放大参考电路，全组 DNP）",
+    "key_components": [
+      { "role": "divider-hi", "value": "R1 2.2k 1% 0402", "fixed": true },
+      { "role": "divider-lo", "value": "R2 1k", "fixed": true },
+      { "role": "c-div", "value": "C1 0.1µF", "fixed": true },
+      { "role": "c-adc", "value": "C2 100nF", "fixed": true },
+      { "role": "fpc-connector", "value": "J2 2P 1.0mm 翻盖式（金手指朝下方向款——选错=首版最高风险）", "fixed": true },
+      { "role": "bypass-chain", "value": "R4/R5 100k + R6 0Ω DNP", "fixed": false },
+      { "role": "opamp-insurance", "value": "LMV321 SOT23-5 全组 DNP", "fixed": false }
+    ],
+    "key_nets": ["VDD", "GND", "DIV", "DIV2", "ADC_IN", "P3_OUT"],
+    "formulas": ["V(DIV) = VDD × R_sensor/(R1+R_sensor)，传感器 53~90Ω → 分压比随角度变化"]
+  },
+  "boundary_ports": [
+    { "name": "VDD", "direction": "power-in", "net_hint": "" },
+    { "name": "GND", "direction": "ground", "net_hint": "" },
+    { "name": "ADC_IN", "direction": "output", "net_hint": "至 MCU P0.02" },
+    { "name": "SENSOR", "direction": "input", "net_hint": "经 J2 外接柔性传感器" },
+    { "name": "P3_OUT", "direction": "input", "net_hint": "旁路转接板输入（与 SENSOR 互斥）" }
+  ],
+  "layout_constraints": [
+    "模拟角右下分区（座+分压+RC+DNP 保险位+测试点，§5.1）",
+    "与充电区对角相距 >25mm、与晶振区 ≥8mm（§5.1）",
+    "ADC_IN 全链（J2→R1/C1→R2/C2→P0.02）总长 <15mm、不换层；必须换层时 2mm 内伴地过孔（§6.2）",
+    "J2 插拔朝右板外，丝印'金手指朝下↓'（§5.2/§9）",
+    "模拟角下方顶层铺铜完整不开洞（§6.6）"
+  ],
+  "verification": {
+    "criteria": [
+      "§3.11 前端逐元件按值；J2 方向款核对",
+      "§3.12 LMV321 DNP 保险位画全网络",
+      "§3.13 P3 旁路链互斥关系（R6 DNP）",
+      "网表断言：DIV/ADC_IN/DIV2 成员精确匹配"
+    ],
+    "testbench": ""
+  },
+  "teaching_notes": "高阻分压+RC 滤波进 SAR ADC 的模拟前端设计、DNP 保险位方法论、旁路链互斥",
+  "verified_in": ""
+}

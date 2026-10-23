@@ -1,0 +1,33 @@
+{
+  "description": "PCB 许愿式设计硬门禁：PreToolUse 拦截未过门的 EDA 写操作与手改门禁状态；SessionStart 注入项目阶段简报",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^(Bash|Write|Edit|NotebookEdit|mcp__lceda.*)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/gate_hook.py\"",
+            "timeoutMs": 15000,
+            "statusMessage": "门禁检查：EDA 写操作是否越过未过之门",
+            "enabled": true
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"${CLAUDE_PLUGIN_ROOT}/scripts/hooks/session_brief.py\"",
+            "timeoutMs": 15000,
+            "statusMessage": "会话简报：项目/门禁/挂账状态",
+            "enabled": true
+          }
+        ]
+      }
+    ]
+  }
+}

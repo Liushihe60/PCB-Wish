@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "name": "demo-稳压源模块IR示例",
+    "created": "2026-10-19",
+    "mission": "../../projects/demo/MISSION.md"
+  },
+  "stackup": {
+    "layers": 4,
+    "plane_layers": ["L2-GND", "L3-POWER"],
+    "impedance_targets": [],
+    "note": "叠层参数 API 读不到；阻抗结论只能标设计期规则满足，实际由打样阻抗条带验证"
+  },
+  "modules": [
+    {
+      "id": "buck-core",
+      "name": "DC-DC 主体电路（TPS40200）",
+      "type": "power",
+      "block_ref": "buck-tps40200",
+      "components": [
+        { "ref": "U1", "value": "TPS40200", "package": "SOIC-8", "part_number": "C9759" },
+        { "ref": "Q1", "value": "FDC654P", "package": "SOT23-6" },
+        { "ref": "L1", "value": "33uH@2A" },
+        { "ref": "D1", "value": "1N5822" }
+      ],
+      "pins": ["U1.1", "U1.2", "U1.3", "U1.4", "U1.5", "U1.6", "U1.7", "U1.8", "Q1.1", "Q1.4", "L1.1", "L1.2", "D1.1", "D1.2"],
+      "boundary_ports": [
+        { "name": "VIN", "net": "VIN" },
+        { "name": "VOUT", "net": "VOUT" },
+        { "name": "GND", "net": "GND" }
+      ],
+      "layout_constraints": [
+        "主电流回路面积最小化：Q1-L1-D1-Cout 放得近",
+        "FB 分压电阻贴近 U1.4（FB）引脚，走线细而短",
+        "去耦电容 C11 紧贴 U1.VDD 焊盘，距离 <3mm",
+        "敏感网络（ISNS→FB）远离 L1"
+      ],
+      "teaching": true
+    },
+    {
+      "id": "aux-power",
+      "name": "辅助电源电路（78L07）",
+      "type": "power",
+      "components": [
+        { "ref": "U2", "value": "78L07", "package": "TO-92" },
+        { "ref": "C6", "value": "33uF/35V" }
+      ],
+      "pins": ["U2.1", "U2.2", "U2.3", "C6.1", "C6.2"],
+      "boundary_ports": [{ "name": "VIN", "net": "VIN" }, { "name": "V7", "net": "+7V" }],
+      "layout_constraints": [],
+      "teaching": true
+    }
+  ],
+  "nets": [
+    { "name": "VIN", "clazz": "power", "members": ["U1.7", "U2.1", "C6.1"] },
+    { "name": "GDRV", "clazz": "signal", "members": ["U1.6", "Q1.4"] },
+    { "name": "SW", "clazz": "power", "members": ["Q1.1", "D1.2", "L1.1"] },
+    { "name": "VOUT", "clazz": "power", "members": ["L1.2", "U1.8"] },
+    { "name": "GND", "clazz": "ground", "members": ["U1.3", "U1.5", "D1.1", "U2.2", "C6.2"] }
+  ],
+  "constraints": [
+    { "id": "C1", "h_ref": "H1", "statement": "输出 5V±3%（DC 精度）" },
+    { "id": "C2", "h_ref": "H3", "statement": "输出纹波 ≤100mVpp" }
+  ],
+  "teaching": { "enabled": true, "profile": "course-3a" }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "pcb-wish",
+  "version": "0.4.0",
+  "description": "Wish-style PCB design agent: structured intake with constraint gating, modular design reusing verified reference blocks, per-module + full-board independent verification, manufacturing-file delivery. Optional teaching lecture generation (LaTeX PDF). In-app project panel (gates pipeline, pending decisions, board snapshot, deliverables).",
+  "author": {
+    "name": "PCB-Wish Project"
+  },
+  "license": "MIT",
+  "skills": "skills",
+  "agents": "agents",
+  "mcpServers": {
+    "lceda-pro": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/eda/lceda_mcp_launch.py"],
+      "timeoutMs": 60000
+    },
+    "pcb-wish-panel": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/ui/panel_mcp.py"],
+      "timeoutMs": 60000
+    }
+  },
+  "ui": {
+    "surfaces": [
+      {
+        "id": "panel",
+        "title": { "en": "PCB-Wish Panel", "zh-CN": "PCB-Wish 面板" },
+        "server": "pcb-wish-panel",
+        "resourceUri": "ui://pcb-wish/panel.html",
+        "availability": "session"
+      }
+    ]
+  }
+}

@@ -5,12 +5,13 @@
  */
 export const ZCODE_PREVIEW_IDENTITY_ENV = "ZCODE_PREVIEW_IDENTITY";
 
+// PCBWish fork：production 身份直接固化为领域产品（并排安装版独立于 ZCode）。
 const PRODUCTION_IDENTITY = Object.freeze({
   flavor: "production",
-  appId: "dev.zcode.app",
-  productName: "ZCode",
-  linuxExecutableName: "zcode",
-  linuxPackageName: "zcode",
+  appId: "app.pcbwish.desktop",
+  productName: "PCB-Wish",
+  linuxExecutableName: "pcbwish",
+  linuxPackageName: "pcbwish",
   cuaHelperInstallVariant: null,
 });
 
@@ -84,7 +85,7 @@ export function resolveDesktopArtifactSuffix(env = process.env) {
  */
 export function resolveWindowsAppUserModelIdForFlavor(flavor, runtime = { isPackaged: true }) {
   if (runtime.isPackaged === false) {
-    return "cn.aminer.zcode";
+    return "app.pcbwish.desktop";
   }
   return desktopProductIdentities[flavor === "preview" ? "preview" : "production"].appId;
 }

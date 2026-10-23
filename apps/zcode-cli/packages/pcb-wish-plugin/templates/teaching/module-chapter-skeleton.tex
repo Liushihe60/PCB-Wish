@@ -1,0 +1,86 @@
+% module-chapter-skeleton.tex — 模块章骨架（v2 教学化版式，无习题）
+% 用法：teaching-lecture 生成每个模块章时按本骨架成稿；占位符用 ⟨…⟩ 标出。
+% 版式纪律（对应 main-demo.tex 导言区）：
+%   - 教学盒子只用内置 definition/theorem/proposition/example/note/conclusion
+%     + 自定义 misconception；不再新增盒子；
+%   - 状态标注只用 \verified/\computed/\estimate/\notestablished，禁止裸写文字状态
+%     （表格"状态"列可用纯文本状态名）；
+%   - 每个数值/公式/指标必须回链：决策日志 / 验证记录 / 计算书 / datasheet 页码。
+
+\chapter{⟨模块名（主控芯片/电路主体）⟩}
+
+% ---- 件套 1：章首导读（introduction，双栏自动排）----
+\begin{introduction}
+  \item ⟨学习目标 1，以 Bloom 动词开头：复述/辨析/核算/陈述/指出…⟩；
+  \item ⟨学习目标 2⟩；
+  \item ⟨学习目标 3--5 条为宜，与五段一一呼应⟩。
+\end{introduction}
+
+% ---- 件套 2：功能用途 ----
+\section{功能用途}
+⟨一段话：本模块解决什么问题、在整机中的位置、与相邻模块的输入输出关系。⟩
+⟨硬约束清单 itemize：每条句末 \verified{课程任务书/MISSION 条目}。⟩
+
+% 概念定义用绿盒；每章 1--2 个为宜
+\begin{definition}{⟨术语/拓扑名⟩}{⟨label⟩}
+⟨定义本体 + 一句"为什么用它不用别的"。引用：\ref{def:⟨label⟩}⟩
+\end{definition}
+
+% ---- 件套 3：工作原理 ----
+\section{工作原理}
+⟨拓扑与信号流叙述；芯片功能块与外部元件对应关系。⟩
+⟨电路图 circuitikz 教学重绘版（单元标注用文本模式，如 l=L1\,33uH），caption 注明
+  "教学重绘版；工程真实原理图见附录 A"。⟩
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+  \toprule
+  ⟨总览表：并列结构/网络/支路 一览⟩ \\
+  \midrule
+  ⟨…&…&…&…⟩ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+⟨逐条展开：\paragraph{名称} + 公式（equation 编号）+ \estimate/\notestablished 状态。⟩
+
+% 设计规则/经验法则升格为编号蓝盒（每章 1--3 个），供正文 \ref{pro:⟨label⟩} 引用
+\begin{proposition}{⟨规则名⟩}{⟨label⟩}
+⟨规则内容。理由：⟨物理依据⟩。状态徽标。⟩
+\end{proposition}
+
+% 本模块最容易犯的错，用唯一自定义红盒；固定三行式，每章 1--2 个
+\begin{misconception}{⟨错误主题⟩}
+\textbf{错误做法}：⟨…⟩
+\textbf{后果}：⟨…⟩
+\textbf{正确做法}：⟨…⟩
+\end{misconception}
+
+% 完整示范推导/操作，example(带标题) + solution 配对；本章 1 个为宜
+\begin{example}[⟨示例主题⟩]
+⟨题面：给目标/候选集。⟩
+\begin{solution}
+⟨分步推导：先估量级 → 再回链 → 给出可改标 \computed{} 的条件。⟩
+\end{solution}
+\end{example}
+
+% ---- 件套 4：设计依据与计算 ----
+\section{设计依据与计算}
+⟨引言句 + 取值总览表（参数/取值/决策要点/状态+回链）。⟩
+⟨2--3 个 \paragraph 深入展开推导链；无法闭环的写明缺什么。⟩
+
+% ---- 件套 5：PCB 布局布线要点 ----
+\section{PCB 布局布线要点}
+⟨易翻车规则 → proposition 盒；其余 → 带粗体引导词的 itemize；
+  每条给物理理由；翻车案例进 misconception 盒。⟩
+
+% ---- 件套 6：验证方法与结果 ----
+\section{验证方法与结果}
+⟨设计期验证：ERC/DRC/网表断言/Gerber 复核，回链 reports/。⟩
+⟨仿真验证：模型可得性说明（note 环境）、方法、量级结论。⟩
+⟨实测验证（打样后）：占位表，状态列全部"未建立"。⟩
+
+% ---- 件套 7：章末小结 ----
+\begin{conclusion}
+⟨3--5 句：本章要点串联 + 与下一章的衔接。不写"综上所述"式空话。⟩
+\end{conclusion}

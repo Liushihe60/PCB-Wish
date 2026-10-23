@@ -1,0 +1,38 @@
+{
+  "id": "rf-antenna-dnp",
+  "name": "2.4G 天线占位（π 匹配网络 + 陶瓷天线，全 DNP 焊盘保留）",
+  "category": "rf",
+  "status": "draft",
+  "source": {
+    "type": "reference-design",
+    "evidence": "代工任务书 §2.6 RF 块 + §6.5 天线 keepout 规则（本版全 DNP，V2 前锁定型号与匹配值）"
+  },
+  "topology": {
+    "description": "nRF ANT 专用焊盘（H23）→ π 网络（shunt C + series L + shunt C，0402 焊盘）→ ANT1 陶瓷芯片天线（2450AT18B100E 类占位）。本版 π 三元件与 ANT1 全 DNP、焊盘保留、网络画全；50Ω 微带走线按嘉立创阻抗计算器自算线宽（≈2.6~3mm）",
+    "key_components": [
+      { "role": "pi-series-l", "value": "L 0402 位 DNP", "fixed": false },
+      { "role": "pi-shunt-c", "value": "C ×2 0402 位 DNP", "fixed": false },
+      { "role": "antenna", "value": "ANT1 2450AT18B100E 类占位 DNP", "fixed": false }
+    ],
+    "key_nets": ["ANT_N", "ANT_FEED", "GND"],
+    "formulas": []
+  },
+  "boundary_ports": [
+    { "name": "ANT", "direction": "input", "net_hint": "来自 MCU ANT 专用焊盘 H23" },
+    { "name": "GND", "direction": "ground", "net_hint": "" }
+  ],
+  "layout_constraints": [
+    "天线安放右上角板边朝外（ANT1 @39,3.5，π @36,2.5）",
+    "keepout：顶层+底层 x34~45/y0~8 禁铜禁走线（§6.5）"
+  ],
+  "verification": {
+    "criteria": [
+      "§3.17 RF 网络焊盘保留全 DNP",
+      "keepout 区域无铜无走线（铺铜后复查）",
+      "网表断言：ANT_N/ANT_FEED 成员精确匹配"
+    ],
+    "testbench": ""
+  },
+  "teaching_notes": "π 匹配网络拓扑、天线 keepout 与 50Ω 微带的几何代价",
+  "verified_in": ""
+}

@@ -1,0 +1,9 @@
+{
+  "$comment": "种子块 buck-tps40200 分立级仿真判据。testbench 只验功率级量级与包络（无厂商模型，结论记 COMPUTED）；闭环行为与软启动时间由 datasheet 计算复核，不在本 testbench 范围。装好 ngspice 后首次运行须复核 .sp 语法与量级。",
+  "criteria": [
+    { "id": "vout-avg", "measure": "vout_avg", "op": "between", "min": 4.85, "max": 5.15, "unit": "V", "comment": "输出 5V±3%（任务书 H1），判据再放宽至 ±3%裕量" },
+    { "id": "vout-max", "measure": "vout_max", "op": "<=", "target": 5.25, "unit": "V", "comment": "纹波包络上界（≤100mVpp 目标的放大包络档）" },
+    { "id": "vout-min", "measure": "vout_min", "op": ">=", "target": 4.75, "unit": "V", "comment": "纹波包络下界" },
+    { "id": "il-avg", "measure": "i_l_avg", "op": "between", "min": 0.8, "max": 1.2, "unit": "A", "comment": "满载 1A（±20% 行为级容差）" }
+  ]
+}

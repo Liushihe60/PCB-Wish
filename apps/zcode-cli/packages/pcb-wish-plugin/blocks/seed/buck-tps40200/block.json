@@ -1,0 +1,56 @@
+{
+  "id": "buck-tps40200",
+  "name": "DC-DC 降压主体电路（TPS40200，10-20V→5V/1A）",
+  "category": "power",
+  "status": "draft",
+  "source": {
+    "type": "course-material",
+    "evidence": "教研需求/课程任务要求.pdf §1.1.1+§2.1；稳压源学生参考电路图2025；硬件技术实验1指导书 §1.3-1.4（TPS40200 datasheet 导读为课程配套）"
+  },
+  "topology": {
+    "description": "电压模式 BUCK：TPS40200 控制器 + FDC654P 开关管 + 33uH 储能电感 + 1N5822 续流二极管；RC 定时振荡（R5/C7，fsw≈300kHz）、RC 软启动（C8，≥30ms）、RC 拾取噪声滤波（R4/C12）、误差放大补偿（R7/C9/C10）",
+    "key_components": [
+      { "role": "controller", "value": "TPS40200", "package": "SOIC-8", "fixed": true },
+      { "role": "switch", "value": "FDC654P", "package": "SOT23-6", "fixed": true },
+      { "role": "inductor", "value": "33uH@2A", "fixed": true },
+      { "role": "freewheel", "value": "1N5822", "package": "DO-35 直插", "fixed": true },
+      { "role": "osc-rc", "value": "R5=68k C7=470pF（候选之一，按 fsw 公式核算）", "fixed": false },
+      { "role": "softstart-c", "value": "C8=2.2uF（≥30ms 裕量）", "fixed": false },
+      { "role": "clamp-filter", "value": "R4=2k C12=470pF", "fixed": false },
+      { "role": "feedback-divider", "value": "R10≈20k（5V 设点，推导待回链 datasheet）", "fixed": false },
+      { "role": "current-shunt", "value": "R2=0.10Ω/0.5W 2512（触发区间 1.1-1.9A）", "fixed": false }
+    ],
+    "key_nets": ["VIN", "SW", "VOUT", "GDRV", "FB", "ISNS"],
+    "formulas": [
+      "T = RC·ln(VH/(VH-VS))（课程指导书式1-1；TPS40200 振荡/软启动系数见 datasheet）",
+      "Vout ≈ D·Vin（BUCK 占空比关系）",
+      "触发电流 I ∝ 1/R2（限流设点）"
+    ]
+  },
+  "boundary_ports": [
+    { "name": "VIN", "direction": "power-in", "net_hint": "10-20V 直流输入" },
+    { "name": "VOUT", "direction": "power-out", "net_hint": "5V/1A" },
+    { "name": "VOCV+", "direction": "input", "net_hint": "输出电压采样回注（闭环反馈/课程实验 J4 注入点）" },
+    { "name": "GND", "direction": "ground", "net_hint": "功率地（与模拟地 GND1 分地，单点连接）" }
+  ],
+  "layout_constraints": [
+    "主电流回路（Q1→L1→Cout→GND→D1）面积最小化，器件就近",
+    "FB 分压电阻贴近 FB 引脚，走线细而短",
+    "100nF 去耦电容紧贴 VDD 焊盘 <3mm",
+    "R3 采样开尔文接法，检测线细短对称",
+    "敏感采样网络远离 L1",
+    "1A 支路线宽 ≥40mil（目标 ≥100mil）"
+  ],
+  "verification": {
+    "criteria": [
+      "ERC 0 错误",
+      "网表断言：VIN/GND/GDRV/SW/VOUT 全部按拓扑连通；FB/ISNS 网络存在且成员正确",
+      "DRC 0 错误（铺地前+铺地后）",
+      "分立级 buck 仿真：纹波量级 ≤100mVpp（COMPUTED）",
+      "软启动时间 ≥30ms（COMPUTED，C8 RC 定时）"
+    ],
+    "testbench": "testbench/buck_div.sp + criteria.json（分立级功率级量级验证，COMPUTED 级；ngspice 装机后联调）"
+  },
+  "teaching_notes": "五段式样例已固化：templates/teaching/sample-chapter-tps40200.tex（RC 三用途/软启动裕量/限流设点/开尔文/分地单点连接/x1-x10 探头档选择）",
+  "verified_in": ""
+}

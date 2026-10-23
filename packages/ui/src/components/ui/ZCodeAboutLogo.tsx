@@ -4,23 +4,16 @@ export function ZCodeAboutLogo({ className }: { className?: string }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="118"
-      height="100"
+      width="512"
+      height="512"
       fill="none"
-      viewBox="0 0 256 218"
-      className={cn("shrink-0 text-current", className)}
+      viewBox="0 0 512 512"
+      className={cn("shrink-0", className)}
       aria-hidden="true"
       focusable="false"
     >
-      <path
-        fill="currentColor"
-        d="M134.4 0.130152L116.48 25.6022C113.665 29.5699 109.054 32.0019 104.064 32.0019H6.3999V0C6.3999 0.130149 134.4 0.130152 134.4 0.130152Z"
-      />
-      <path fill="currentColor" d="M256 0.130127L102.401 217.732H0L153.599 0.130127H256Z" />
-      <path
-        fill="currentColor"
-        d="M121.601 217.732L139.65 192.134C142.465 188.166 147.076 185.734 152.067 185.734H249.604V217.736H121.601V217.732Z"
-      />
+      <rect x="96" y="96" width="320" height="320" rx="42" fill="#6B7E72"/>
+      <circle cx="160" cy="160" r="11" fill="none" stroke="#C3A184" stroke-width="9"/><circle cx="352" cy="352" r="11" fill="none" stroke="#C3A184" stroke-width="9"/><path d="M176 348H232L288 264" fill="none" stroke="#C3A184" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/><circle cx="176" cy="348" r="18" fill="#C3A184"/><path d="M300 144Q314 186 356 200Q314 214 300 256Q286 214 244 200Q286 186 300 144Z" fill="#EFEAE0"/>
     </svg>
   );
 }

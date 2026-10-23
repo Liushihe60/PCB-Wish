@@ -1,0 +1,2 @@
+
+{"ok":true,"value":{"title":"PCB & 封装 / 直线图元类","remarks":"直线和圆弧线均为导线，对应画布的线条走线和圆弧走线","visibility":"public","methods":[{"name":"create","comment":"创建直线","visibility":"public"},{"name":"delete","comment":"删除直线","visibility":"beta"},{"name":"modify","comment":"修改直线","visibility":"beta"},{"name":"get","comment":"获取直线","visibility":"beta"},{"name":"getAllPrimitiveId","comment":"获取所有直线的图元 ID","visibility":"beta"},{"name":"getAll","comment":"获取所有直线","visibility":"beta"}],"callPath":"pcb_PrimitiveLine"},"logs":[],"durationMs":166}

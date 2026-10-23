@@ -338,6 +338,37 @@ export const OFFICIAL_PLUGIN_DEFINITIONS: readonly OfficialPluginDefinition[] = 
     ],
   },
   {
+    // PCBWish 专属插件（本项目 fork 的领域核心）：intake 门禁 + G0-G7 状态机 + EDA 驱动 + 硬门禁 hooks。
+    // 纯 python/markdown，无 dist 构建产物、无原生依赖,因此 requiresRuntime:false、seed 路径即源码路径。
+    defaultEnabled: true,
+    listing: {
+      author: ZAI_AUTHOR,
+      category: "productivity",
+      displayName: "PCB-Wish",
+      displayName_i18n: { "zh-CN": "PCB-Wish" },
+      description_i18n: { "zh-CN": "许愿式 PCB 设计：约束受理门禁、G0-G7 阶段门禁、嘉立创EDA驱动与独立验证。" },
+    },
+    name: "pcb-wish",
+    componentTypes: ["skills", "agents", "hooks", "mcpServers", "ui"],
+    // ui/panel.html（UI Plugin 页面）与 assets/logo.svg（listing 图标）不在全局 seed 白名单，
+    // 按显式 runtimeTopLevelPaths 带入；漏掉会导致面板 resource 404。
+    runtimeTopLevelPaths: ["ui", "assets"],
+    requiredSeedPaths: [
+      ".zcode-plugin/plugin.json",
+      "hooks/hooks.json",
+      "agents/pcb-design.md",
+      "skills/pcb-design/SKILL.md",
+      "scripts/gate.py",
+    ],
+    rootCandidates: [
+      "packages/pcb-wish-plugin",
+      "../pcb-wish-plugin",
+      "../../pcb-wish-plugin",
+      "../../../pcb-wish-plugin",
+    ],
+    version: "0.3.1",
+  },
+  {
     defaultEnabled: true,
     listing: {
       author: ZAI_AUTHOR,
@@ -385,7 +416,7 @@ export const OFFICIAL_PLUGIN_DEFINITIONS: readonly OfficialPluginDefinition[] = 
       "../../zcode-guide-plugin",
       "../../../zcode-guide-plugin",
     ],
-    version: "0.3.0",
+    version: "0.3.1",
   },
   {
     // 产品决策：电脑控制回退为默认关闭，需用户在设置页显式开启。

@@ -1,0 +1,65 @@
+{
+  "$comment": "标准电路块（standard block）schema v0.1。块是复用的最小单元：固定拓扑+边界端口+布局约束+验证判据+教学注记。status=verified 的块才能被设计流程无条件复用；draft 块须声明来源证据并在首个项目中验证后升级。",
+  "type": "object",
+  "required": ["id", "name", "category", "status", "source", "boundary_ports", "verification"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "name": { "type": "string" },
+    "category": { "type": "string", "description": "power/mcu-minsys/usb/interface/sensing/drive/protection/aux" },
+    "status": { "type": "string", "enum": ["draft", "verified"], "description": "draft=未在真实项目中验证过；verified=已有验证记录" },
+    "source": {
+      "type": "object",
+      "required": ["type", "evidence"],
+      "properties": {
+        "type": { "type": "string", "enum": ["datasheet", "reference-design", "verified-open-source", "course-material"] },
+        "url": { "type": "string" },
+        "evidence": { "type": "string", "description": "具体到章节号/页码/工程名——模糊来源不许建块" }
+      }
+    },
+    "topology": {
+      "type": "object",
+      "properties": {
+        "description": { "type": "string" },
+        "key_components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["role", "value"],
+            "properties": {
+              "role": { "type": "string", "description": "角色名（如 controller/switch/inductor/freewheel），非位号" },
+              "value": { "type": "string" },
+              "package": { "type": "string" },
+              "part_number": { "type": "string", "description": "立创编号（可空，选型阶段确定）" },
+              "fixed": { "type": "boolean", "description": "true=拓扑固定不可替换；false=可按规格替换" }
+            }
+          }
+        },
+        "key_nets": { "type": "array", "items": { "type": "string" } },
+        "formulas": { "type": "array", "items": { "type": "string" }, "description": "取值计算式（含 datasheet 出处）" }
+      }
+    },
+    "boundary_ports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "direction"],
+        "properties": {
+          "name": { "type": "string" },
+          "direction": { "type": "string", "enum": ["input", "output", "bidir", "power-in", "power-out", "ground"] },
+          "net_hint": { "type": "string" }
+        }
+      }
+    },
+    "layout_constraints": { "type": "array", "items": { "type": "string" } },
+    "verification": {
+      "type": "object",
+      "required": ["criteria"],
+      "properties": {
+        "criteria": { "type": "array", "items": { "type": "string" }, "description": "PASS/FAIL 判据，逐条可核对" },
+        "testbench": { "type": "string", "description": "testbench 文件/说明路径（可空，仿真阶段补）" }
+      }
+    },
+    "teaching_notes": { "type": "string", "description": "五段式讲解的素材要点（讲义自动生成时引用）" },
+    "verified_in": { "type": "string", "description": "status=verified 时必填：验证它的项目名" }
+  }
+}

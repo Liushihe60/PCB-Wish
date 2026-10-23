@@ -1,0 +1,53 @@
+{
+  "id": "digital-peripherals",
+  "name": "数字外设（OLED 排母/按钮×2/LED×2/电池采样链）",
+  "category": "interface",
+  "status": "draft",
+  "source": {
+    "type": "reference-design",
+    "evidence": "代工任务书 §2.5 数字外设块 + §3.14-§3.16/§3.18 高危点"
+  },
+  "topology": {
+    "description": "J3 OLED 排母 1×4 2.54（VDD/GND/SDA/SCL，上拉在模块板 4.7k 本板不加）；BTN1 P0.03 / BTN2 P0.28 对地（固件 INPUT_PULLUP 无外上拉，各配 100nF 去抖，不设 boot 按钮）；LED_A 蓝 P0.06 / LED_B 红 P0.26，高电平亮（GPIO—1k—LED—GND）；BAT_ADC 链（预留首版不启用）：VBAT--1M-->节点--510k-->GND，节点→P0.31，P0.14 读使能（接法存疑 Q3，按 510k 直落 GND 保守画）",
+    "key_components": [
+      { "role": "oled-header", "value": "J3 1×4 2.54 直排排母（V1 装）", "fixed": true },
+      { "role": "btn1", "value": "BTN1 12×12 SMD 轻触（0°锚）", "fixed": true },
+      { "role": "btn2", "value": "BTN2 12×12 SMD 轻触（90°锚）", "fixed": true },
+      { "role": "btn-debounce", "value": "100nF ×2", "fixed": false },
+      { "role": "led-blue", "value": "LED_A 0603 蓝 + 1k", "fixed": false },
+      { "role": "led-red", "value": "LED_B 0603 红 + 1k", "fixed": false },
+      { "role": "bat-div", "value": "1M + 510k（预留）", "fixed": false }
+    ],
+    "key_nets": ["VDD", "GND", "SDA", "SCL", "BTN1_N", "BTN2_N", "LED_A_N", "LED_B_N", "VBAT", "BAT_ADC", "BAT_EN"],
+    "formulas": []
+  },
+  "boundary_ports": [
+    { "name": "VDD", "direction": "power-in", "net_hint": "" },
+    { "name": "GND", "direction": "ground", "net_hint": "" },
+    { "name": "VBAT", "direction": "power-in", "net_hint": "电池采样链输入（预留）" },
+    { "name": "SDA", "direction": "bidir", "net_hint": "至 MCU P0.04" },
+    { "name": "SCL", "direction": "bidir", "net_hint": "至 MCU P0.05" },
+    { "name": "BTN1_N", "direction": "output", "net_hint": "至 MCU P0.03" },
+    { "name": "BTN2_N", "direction": "output", "net_hint": "至 MCU P0.28" },
+    { "name": "LED_A_N", "direction": "input", "net_hint": "至 MCU P0.06" },
+    { "name": "LED_B_N", "direction": "input", "net_hint": "至 MCU P0.26" },
+    { "name": "BAT_ADC", "direction": "output", "net_hint": "至 MCU P0.31（预留）" }
+  ],
+  "layout_constraints": [
+    "BTN1/BTN2 帽朝下板外，丝印 0°锚/90°锚（§5.2/§9）",
+    "J3 沿 x 排列（24,4）",
+    "LED×2 (35/37, 22.5) 高电平亮顺序 GPIO—电阻—LED—GND",
+    "大按钮/LED/I2C 走线不横穿模拟角与晶振区（§6.7）"
+  ],
+  "verification": {
+    "criteria": [
+      "§3.16 按钮无外上拉+去抖电容",
+      "§3.15 LED 高电平亮顺序",
+      "§3.18 OLED 排母板上不加 I2C 上拉",
+      "网表断言：BTN/LED/I2C 网络成员精确匹配"
+    ],
+    "testbench": ""
+  },
+  "teaching_notes": "INPUT_PULLUP 按钮接口、去抖电容的必要性、GPIO 灌/拉电流与 LED 接法",
+  "verified_in": ""
+}

@@ -59,7 +59,8 @@ export interface PluginRemovePatchResult {
 }
 
 const DEFAULT_CONFIG_FILE = "config.json";
-const DEFAULT_BASE_DIR = "~/.zcode/cli";
+// PCB-Wish fork：桌面启动会注入隔离的 storage 根，避免读写宿主 ~/.zcode/cli。
+const DEFAULT_BASE_DIR = process.env.ZCODE_STORAGE_DIR?.trim() || "~/.zcode/cli";
 
 /**
  * Resolve path with ~ expansion

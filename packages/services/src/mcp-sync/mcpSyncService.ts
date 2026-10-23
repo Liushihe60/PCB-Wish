@@ -20,6 +20,7 @@ import type {
 } from "@zcode/shared";
 import type { IMcpSyncService } from "./mcpSync.js";
 import { checkRemoteSyncDirectoryWriteAccess } from "../remote-sync/remoteSyncWriteAccess.js";
+import { getDataBaseDir } from "../paths.js";
 
 type McpConfigKeyName = "mcp.servers" | "mcpServers";
 
@@ -164,7 +165,12 @@ function buildDirectoryConfigPath(
   scope: Exclude<McpScope, "common">,
   workspacePath?: string,
 ): string {
-  const baseDir = scope === "user" ? resolveUserHomeDir() : workspacePath;
+  const baseDir =
+    scope === "user"
+      ? descriptor.directorySource === "zcode"
+        ? getDataBaseDir()
+        : resolveUserHomeDir()
+      : workspacePath;
   if (!baseDir) {
     throw new Error(
       `Missing workspace path for ${descriptor.directorySource} workspace MCP config`,

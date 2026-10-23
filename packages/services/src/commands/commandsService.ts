@@ -23,6 +23,7 @@ import { DEFAULT_ENABLED_OFFICIAL_PLUGIN_IDS } from "@zcode/shared";
 import type { ICommandsService } from "./commands.js";
 import { CommandFileParser, type CommandFileFormat } from "./commandFileParser.js";
 import { readInstalledPluginRoots } from "#src/plugins/installedPluginRoots.js";
+import { getDataBaseDir } from "../paths.js";
 
 function resolveUserHomeDir() {
   const envHome = process.env.HOME?.trim() || process.env.USERPROFILE?.trim();
@@ -82,11 +83,11 @@ function getCommandSourceDescriptor(
 
 function getUserCommandsRoot(agentSource?: CommandAgentSource): string {
   const descriptor = getCommandSourceDescriptor(agentSource);
-  return join(resolveUserHomeDir(), ...descriptor.userDirectorySegments);
+  return join(getDataBaseDir(), ...descriptor.userDirectorySegments);
 }
 
 function getUserCliConfigPath(): string {
-  return join(resolveUserHomeDir(), ".zcode", "cli", "config.json");
+  return join(getDataBaseDir(), ".zcode", "cli", "config.json");
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

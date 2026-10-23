@@ -1,0 +1,2 @@
+
+{"ok":true,"value":{"title":"PCB & 封装 / 过孔图元类","visibility":"public","methods":[{"name":"create","comment":"创建过孔","visibility":"public"},{"name":"delete","comment":"删除过孔","visibility":"beta"},{"name":"modify","comment":"修改过孔","visibility":"beta"},{"name":"get","comment":"获取过孔","visibility":"beta"},{"name":"getAllPrimitiveId","comment":"获取所有过孔图元 ID","visibility":"beta"},{"name":"getAll","comment":"获取所有过孔","visibility":"beta"}],"callPath":"pcb_PrimitiveVia"},"logs":[],"durationMs":131}

@@ -21,6 +21,7 @@ import { ZipFile } from "yazl";
 import {
   createFeedbackDiagnosticArchive,
   getAppConfigDir,
+  getDataBaseDir,
   getExportLogDir as getDefaultExportLogDir,
   getExportLogStageDir as getDefaultExportLogStageDir,
   getFeedbackLogArchiveDir as getDefaultFeedbackLogArchiveDir,
@@ -33,7 +34,7 @@ function getZCodeDataDir() {
 }
 
 function getZCodeCliDir() {
-  return join(homedir(), ".zcode", "cli");
+  return join(getDataBaseDir(), ".zcode", "cli");
 }
 
 function getZCodeCliLogDir() {

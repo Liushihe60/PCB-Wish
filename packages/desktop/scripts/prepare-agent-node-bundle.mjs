@@ -122,6 +122,19 @@ const officialPluginPackages = [
     stagedPath: "packages/documents-plugin",
   },
   {
+    packageName: "@zcode/pcb-wish-plugin",
+    relativePath: "apps/zcode-cli/packages/pcb-wish-plugin",
+    requiresRuntime: false,
+    requiredSeedPaths: [
+      ".zcode-plugin/plugin.json",
+      "hooks/hooks.json",
+      "agents/pcb-design.md",
+      "skills/pcb-design/SKILL.md",
+      "scripts/gate.py",
+    ],
+    stagedPath: "packages/pcb-wish-plugin",
+  },
+  {
     packageName: "@zcode/image-search-plugin",
     relativePath: "apps/zcode-cli/packages/image-search-plugin",
     requiresRuntime: false,
@@ -295,6 +308,11 @@ const includedOfficialPluginTopLevelPaths = new Set([
   "scripts",
   "skills",
   "templates",
+  // pcb-wish：面板页与品牌资源是 UI Plugin/ listing 图标的运行时资产。
+  "ui",
+  "assets",
+  // pcb-wish：标准电路块库是设计阶段复用与 IR block_ref 校验的运行时资产。
+  "blocks",
 ]);
 const excludedOfficialPluginAssetNames = new Set([
   ".DS_Store",

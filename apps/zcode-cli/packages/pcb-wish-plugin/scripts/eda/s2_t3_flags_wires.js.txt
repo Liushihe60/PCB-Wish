@@ -1,0 +1,30 @@
+// T3: delete dead-net flags + delta flags + their stub wires. args={flags:[ids], stubs:[ids], page:uuid}
+await eda.dmt_EditorControl.openDocument(__CLI__.args.page);
+await new Promise(r => setTimeout(r, 3000));
+
+const fres = [];
+for (const id of __CLI__.args.flags) {
+  let how = '', err = '';
+  try {
+    try { await eda.sch_PrimitiveComponent.delete(id); how = 'single'; }
+    catch (e1) { await eda.sch_PrimitiveComponent.delete([id]); how = 'array'; }
+  } catch (e) { err = String(e).slice(0, 80); }
+  fres.push({ id, how, err });
+  await new Promise(r => setTimeout(r, 150));
+}
+await new Promise(r => setTimeout(r, 3000));
+
+// re-enumerate remaining wires; delete stubs whose id still exists
+const wres = [];
+const liveWires = new Set(await eda.sch_PrimitiveWire.getAllPrimitiveId());
+for (const id of __CLI__.args.stubs) {
+  if (!liveWires.has(id)) { wres.push({ id, gone: true }); continue; }
+  let how = '', err = '';
+  try {
+    try { await eda.sch_PrimitiveWire.delete(id); how = 'single'; }
+    catch (e1) { await eda.sch_PrimitiveWire.delete([id]); how = 'array'; }
+  } catch (e) { err = String(e).slice(0, 80); }
+  wres.push({ id, how, err });
+  await new Promise(r => setTimeout(r, 150));
+}
+return { fres, wres };

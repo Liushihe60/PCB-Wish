@@ -1,0 +1,229 @@
+% sample-chapter-tps40200.tex — 模块章五段式粒度样例（v2 教学化版式）
+% 素材来源：教研需求/课程任务要求.pdf、硬件技术实验1指导书、稳压源学生参考电路图2025、PCB培训01/02
+% 标注纪律：状态一律用 \verified/\computed/\estimate/\notestablished 徽标 + 回链，
+%           禁止括号文字裸写状态；AI 推导且未经佐证的内容标 \notestablished。
+\chapter{DC-DC 主体电路（TPS40200）}
+
+\begin{introduction}
+  \item 复述 BUCK 拓扑把 10--20V 输入变成稳定 5V 的过程（记住/理解）；
+  \item 辨析同板上三个 RC 网络的三种不同用途（分析）；
+  \item 按 datasheet 公式核算振荡频率的 RC 取值（应用）；
+  \item 陈述主电流回路、FB 支路、去耦电容的布局纪律并说明理由（理解/应用）；
+  \item 指出本模块五项硬约束与各自的验证口径（记住）。
+\end{introduction}
+
+\section{功能用途}
+
+本模块是稳压源课程项目的功率核心：把直流 10--20V 输入降压为稳定的 5V，额定输出 1A，
+并带输出限流保护。它与单片机监测板（ADC 采样电压/电流、数码管显示）构成完整的课程系统。
+
+本模块承接的硬约束（回链 MISSION.md，均\verified{课程任务书 2.1}）：
+\begin{itemize}
+  \item 输出电压 5V，绝对精度 $\pm 3\%$；
+  \item 电压调整率、负载调整率 $\le 0.5\%$；
+  \item 输出纹波 $\le 100\,\mathrm{mVpp}$；
+  \item 电源变换效率（满载）$\ge 80\%$；
+  \item 过流保护触发区间 1.1A--1.9A。
+\end{itemize}
+
+\begin{definition}{BUCK（降压）拓扑}{buck-def}
+功率开关管周期性通断，把输入电压“斩”成方波，经续流二极管与储能电感平滑后输出；
+输出电压与 PWM 占空比近似成正比 $V_{out} \approx D \cdot V_{in}$。
+相对线性稳压，开关变换没有把压差耗在调整管上，满载效率可达 90\% 以上。
+\end{definition}
+
+\section{工作原理}
+
+主控芯片 TPS40200 是宽输入非同步降压\emph{控制器}——不含内置功率管，
+需外接开关管 Q1（FDC654P）。芯片内部功能块与外部元件的对应关系见图~\ref{fig:buck-topo}：
+定时引脚（1 脚）外接 $R_5C_7$ 决定开关节拍；软启动引脚（2 脚）外接 $C_8$ 决定上电爬升速度；
+反馈引脚（FB）经 $R_1/R_{10}$ 分压回到内部误差放大器，与内部基准比较后调节占空比。
+
+\begin{figure}[t]
+  \centering
+  \begin{circuitikz}[american, scale=0.95, transform shape]
+    \draw (0,4) to[battery1, l=$V_{in}$\,10--20V] (0,0);
+    \draw (0,4) -- (1.2,4) to[nos, l=Q1] (3.2,4) -- (4.2,4);
+    \draw (4.2,4) to[L, l=L1\,33uH] (6.2,4) -- (8.2,4);
+    \draw (4.2,4) to[D, l=D1\,1N5822] (4.2,0);
+    \draw (6.8,4) to[R, l=$R_1$] (6.8,2.2) to[R, l=$R_{10}$] (6.8,0);
+    \draw (6.8,2.2) node[circ]{} node[right]{FB};
+    \draw (7.6,4) to[C, l=$C_{out}$] (7.6,0);
+    \draw (8.2,4) to[short, -o] (8.6,4);
+    \draw (0,0) -- (7.6,0);
+    \draw (0,0) node[ground]{};
+    \node[anchor=west] at (8.75,4) {$V_{out}$\,5V};
+  \end{circuitikz}
+  \caption{BUCK 主体拓扑简化图（教学重绘版；工程真实原理图见附录 A 的 EDA 导出图对照）}
+  \label{fig:buck-topo}
+\end{figure}
+
+本实验的精髓在于：\textbf{同是 $R$+C，三种用途完全不同}。先总览再逐个拆解：
+
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+  \toprule
+  RC 网络 & 接引脚 & 用途 & 一句话原理 \\
+  \midrule
+  $R_5 C_7$ & 1 脚（定时） & 振荡节拍 & 充电定时决定开关频率 \\
+  内阻 + $C_8$ & 2 脚（软启动） & 上电爬升 & 电流源给 $C_8$ 充电，缓抬基准 \\
+  $R_4 C_{12}$ & 7、8 脚 & 拾取噪声滤波 & 低通抑制过流检测通路高频干扰 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{定时（振荡）} 芯片 1 脚外接的 $R_5 C_7$ 与内部电路组成单稳态多谐振荡电路，
+产生开关管切换的节拍信号（锯齿波）。充电定时满足通式
+\begin{equation}
+  T = R C \cdot \ln\!\left(\frac{V_H}{V_H - V_S}\right),
+  \label{eq:rc-timing}
+\end{equation}
+具体到 TPS40200 的振荡周期系数，以 datasheet RC 定时公式为准
+（\notestablished{样章未逐字核对公式系数，正式版回链 datasheet 页码后改标}）。
+
+\paragraph{定时（软启动）} 芯片 2 脚内部电阻与外接 $C_8$ 构成软启动定时：上电时输出电压
+缓慢爬升，避免冲击。datasheet 的软启动公式与式~\eqref{eq:rc-timing} 形式一致。
+
+\paragraph{滤波（拾取噪声抑制）} 芯片 7、8 脚外接的 $R_4 C_{12}$ 低通网络，
+抑制过流保护检测通路上的高频拾取噪声，提高保护机制的工作稳定性
+（\verified{课程指导书 1.3.1}）。
+
+\paragraph{频率补偿} 芯片 3、4 脚外接的 $R_7 C_9 C_{10}$ 网络是误差放大器的反馈通路，
+用零点-极点配置保证高增益环路稳定、防止自激。原理较深，工程上按 datasheet 设计范例取值
+（\estimate{按手册范例，无独立仿真复算}）。
+
+\begin{misconception}{三个 RC 网络混为一谈}
+\textbf{错误做法}：看到都是电阻加电容，套同一个 RC 公式取值，或把软启动电容与定时电容互相替换。
+\textbf{后果}：开关频率偏离 300\,kHz 设计点，或上电冲击保护误触发，排查时很难定位。
+\textbf{正确做法}：先查芯片引脚表确认该网络接在哪个功能脚，再决定用什么公式——用途由引脚功能决定，不由元件种类决定。
+\end{misconception}
+
+\begin{example}[振荡频率 RC 选型]
+目标开关频率 $f_{sw} \approx 300\,\mathrm{kHz}$（课程指定）。datasheet 给出的候选组合：
+68k$\Omega$+470pF、20k$\Omega$+1.5nF、12k$\Omega$+2.7nF。试核算课程选定的 68k$\Omega$+470pF。
+
+\begin{solution}
+由式~\eqref{eq:rc-timing}，振荡周期 $T = R_5 C_7 \cdot K$，其中 $K$ 为 datasheet
+定时系数（\notestablished{样章未逐字核对，回链 datasheet 后补全}）。本例演示两步走：
+先估量级——三组候选的 $RC$ 乘积同为 $3.0\times10^{-5}\,\mathrm{s}$ 量级
+（$68\mathrm{k}\times470\mathrm{p}=3.2$、$20\mathrm{k}\times1.5\mathrm{n}=3.0$、
+$12\mathrm{k}\times2.7\mathrm{n}=3.24$），说明课程候选表在组间等价，任选一组频率设计点不变；
+课程选定 68k$\Omega$+470pF。后回链——查到 $K$ 的具体数值后，按
+$f_{sw}=1/(K\,R_5 C_7)$ 复算精确频率，此步完成方可改标 \computed{正式版回链 datasheet 复核}。
+\end{solution}
+\end{example}
+
+\section{设计依据与计算}
+
+每个取值都给出推导链；无法闭环的标注清楚。取值总览见表~\ref{tab:buck-values}，
+推导要点随后展开。
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    参数 & 取值 & 决策要点 & 状态（回链） \\
+    \midrule
+    开关频率 & 300 kHz & 课程指定；RC 三候选等价，取 68k+470pF & \computed{课程预习参考答案} \\
+    软启动 & $\ge$30 ms & 理论值约 7ms 量级，留足裕量；$C_8$=2.2uF & \computed{课程预习结论} \\
+    输出设点 & $R_{10}$=20k$\Omega$ & FB 等于内部基准（0.7V 量级） & \computed{课程预习参考答案} \\
+    限流设点 & $R_2$=0.10$\Omega$ & 三候选中最大，触发点落入 1.1--1.9A 概率最高 & \computed{课程预习参考答案} \\
+    滤波网络 & $R_4$=2k，$C_{12}$=470pF & 指定值；三候选取最大抑制噪声 & \computed{课程预习参考答案} \\
+    载流线宽 & 1A 支路 $\ge$40mil & 最好 100mil；0.1A 及以下最小 10mil & \verified{PCB 培训02} \\
+    \bottomrule
+  \end{tabular}
+  \caption{DC-DC 模块取值总览（每行回链见状态徽标；推导细节见正文）}
+  \label{tab:buck-values}
+\end{table}
+
+\paragraph{软启动时间} 设计意图是留足裕量：式~\eqref{eq:rc-timing} 理论值约 7ms 量级，
+工程上要求不低于 30ms，故 $C_8$ 取 2.2uF（\computed{课程预习结论}）。
+
+\paragraph{输出电压设点} 反馈分压使 FB 引脚电压等于内部基准（0.7V 量级，
+\notestablished{基准值与分压电阻计算待回链 datasheet 后补全推导}），
+课程给出 $R_{10}$ 的合适取值为 20k$\Omega$（\computed{课程预习参考答案}）。
+
+\begin{proposition}{限流触发方向}{limit-direction}
+采样电阻 $R_2$ 上检测电压达到阈值即触发保护，故触发电流 $I \propto 1/R_2$：
+\emph{大阻值压低触发点}。要求低于 1.1A 必不触发、高于 1.9A 必触发时，
+在 0.05/0.068/0.10$\Omega$ 候选中取最大值 0.10$\Omega$ 落入保护区间的概率最高
+（\computed{课程预习参考答案}）。实际取值仍以测试效果最终确定（课程原文）。
+\end{proposition}
+
+\section{PCB 布局布线要点}
+
+以下纪律全部来自课程培训与真实翻车案例（\verified{PCB 培训01/02}），
+三条最易翻车的规则升格为编号规则盒，其余列后。
+
+\begin{proposition}{去耦电容贴装距离}{decap-distance}
+去耦电容（100nF，X7R/X5R 陶瓷）紧贴芯片电源引脚，距离应在 3mm 以内。
+理由：引线寄生电感与长度成正比，而寄生电感是开关噪声的放大器——距离就是寄生电感。
+\end{proposition}
+
+\begin{proposition}{开尔文接法}{kelvin-sense}
+$R_3$ 电流采样电阻两端电压检测走线细而短、对称，大电流支路走线粗。
+理由：采样电阻只有 0.1$\Omega$ 量级，检测走线若与大电流共用路径，
+导线电阻与焊料电阻都会污染测量。
+\end{proposition}
+
+\begin{misconception}{走线角度与芯片焊盘布线}
+\textbf{错误做法}：为省空间走直角/锐角走线；为引出线在贴片芯片焊盘上打盘中孔。
+\textbf{后果}：直角处阻抗突变造成信号反射与蚀刻异常；芯片焊盘打孔会抢锡，
+导致焊接虚焊、立碑。
+\textbf{正确做法}：用 45° 或圆弧走线；盘中孔只允许出现在贴片阻容焊盘；
+芯片下最多压 3 根走线，管脚间不走线。
+\end{misconception}
+
+其余布局要点：
+\begin{itemize}
+  \item \textbf{主电流回路}面积尽量小、走线尽量粗——布局上 Q1/L1/D1/$C_{out}$ 放得近；
+  \item \textbf{FB 支路}两个分压电阻越靠近 FB 引脚越好、覆盖面积越小越好，走线细而短；
+  \item \textbf{储能电容}分档：总电源入口 47uF--1000uF（电解）、大电流芯片附近 1uF--10uF、
+        转换电路出入口按手册；电解电容高频表现感性强，与陶瓷电容并联互补；
+  \item \textbf{差分对称}：差分放大器两路元件、走线尽量对称（电流检测、误差放大、限压保护三处）；
+  \item \textbf{分地策略}：GND（开关电源地，方波谐波+开关噪声）与 GND1（ADC/DAC 模拟地）
+        分开铺地，经 $R_{24}$（0$\Omega$）单点连接；两面铺地，大面积铺地区域打散热孔连接上下地；
+  \item \textbf{敏感网络远离电感}（如 $V_{OCV+}$ 到 FB 的采样支路）。
+\end{itemize}
+
+\section{验证方法与结果}
+
+\paragraph{设计期验证（一期已做）} ERC 0 错误；网表断言（must-connect/must-not-connect）
+全绿；DRC 0 错误（铺地前、铺地后各一次）；制造文件独立 Gerber 解析复核通过。
+（回链：reports/ 下对应记录）
+
+\begin{note}
+TPS40200 无公开 ngspice 模型（厂商模型限制）。本工程采用分立级 BUCK 开关模型 +
+计算复核验证纹波/软启动量级，结论按 \computed{分立级开关模型仿真 + 计算书} 口径记录
+——不许伪造厂商模型，是本管线的硬护栏。
+\end{note}
+
+\paragraph{实测验证（打样后，二期）} 样例保留实测占位表，全部为未建立状态
+（打样后回填，讲义正文引用本表）：
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    测试点 & 观测内容 & 预期 & 状态 \\
+    \midrule
+    TP1 & 锯齿波频率/幅度 & $f_{sw}\approx300\,$kHz（须 x10 探头档，理由见指导书 1.3.2） & 未建立 \\
+    TP4 & PWM 波形 & 正常矩形波（R44 接通后） & 未建立 \\
+    VOUT & 5V 精度/纹波 & $\pm 3\%$；$\le 100\,$mVpp（纹波用 x1 档） & 未建立 \\
+    占空比 & 自动调节 & 输出低于设点→占空比增大 & 未建立 \\
+    \bottomrule
+  \end{tabular}
+  \caption{实测验证占位表（打样后回填，讲义正文引用本表）}
+\end{table}
+
+\paragraph{教学仿真} 本章配套 CircuitJS1 可复现仿真：见附录 B（.cct 文件 + 打开方式；
+嘉立创EDA用户也可经官方 circuitjs 扩展在 EDA 内直接打开）。
+
+\begin{conclusion}
+本模块用 TPS40200 控制器加外管构成 BUCK：占空比近似线性映射输出电压；
+三个 RC 网络因引脚功能不同而用途不同，选型公式先估量级、正式版必须回链 datasheet；
+布局上主电流回路最小化、FB 细短、去耦 3mm、采样开尔文；设计期验证以 ERC/DRC/
+网表断言/Gerber 复核四道关为准，纹波与软启动的定量结论目前为分立级仿真+计算复核。
+下一章（单片机监测板）将复用本模块的分地与去耦纪律。
+\end{conclusion}

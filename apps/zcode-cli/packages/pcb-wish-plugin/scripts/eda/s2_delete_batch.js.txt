@@ -1,0 +1,31 @@
+// T2: delete 21 symbols by designator. args = {refs:[...], page:'<sch page uuid>'}
+const refs = __CLI__.args.refs;
+await eda.dmt_EditorControl.openDocument(__CLI__.args.page);
+await new Promise(r => setTimeout(r, 3000));
+
+const out = [];
+for (const ref of refs) {
+  try {
+    const ids = await eda.sch_PrimitiveComponent.getAllPrimitiveId();
+    let target = null;
+    for (const id of ids) {
+      const c = await eda.sch_PrimitiveComponent.get(id);
+      const dz = c.getState_Designator ? c.getState_Designator() : null;
+      if (dz === ref) { target = { id, c }; break; }
+    }
+    if (!target) { out.push({ ref, found: false }); continue; }
+    let how = '';
+    try {
+      await eda.sch_PrimitiveComponent.delete(target.id);
+      how = 'single';
+    } catch (e1) {
+      await eda.sch_PrimitiveComponent.delete([target.id]);
+      how = 'array';
+    }
+    out.push({ ref, found: true, how, id: target.id });
+    await new Promise(r => setTimeout(r, 200));
+  } catch (e) {
+    out.push({ ref, err: String(e).slice(0, 100) });
+  }
+}
+return out;

@@ -1,0 +1,45 @@
+{
+  "id": "power-usb-charge",
+  "name": "USB Type-C 供电 + TP4056 锂充电（500mAh 电池）",
+  "category": "power",
+  "status": "draft",
+  "source": {
+    "type": "reference-design",
+    "evidence": "代工任务书 §2.2 电源块（已定稿网络表，多轮外部审阅）+ §4.1 关键器件表"
+  },
+  "topology": {
+    "description": "Type-C 16P 卧贴（CC1/CC2 各 5.1k 下拉）→ VBUS（TVS 双向 5V 对地，差分线不挂 TVS，D+/D- 各串 33Ω）→ TP4056 恒流充电（PROG 6.2k≈194mA，CE 接 VBUS 高有效）→ VBAT（JST-PH2.0 电池座）；CHRG 低电平亮红色 LED（LED 阳极经 1k 接 VBAT）",
+    "key_components": [
+      { "role": "usb-connector", "value": "Type-C 16P 卧贴（带定位柱优先）", "fixed": true },
+      { "role": "tvs", "value": "ESD9B5.0S-02 类双向 5V", "fixed": false },
+      { "role": "charger", "value": "TP4056 ESOP8（锁定唯一料号，禁换 TP4054/4057）", "fixed": true },
+      { "role": "prog-r", "value": "6.2k", "fixed": false },
+      { "role": "battery-connector", "value": "JST-PH2.0 卧贴 2P（电池带保护板）", "fixed": true },
+      { "role": "cc-pulldown", "value": "5.1k x2", "fixed": false }
+    ],
+    "key_nets": ["VBUS", "VBAT", "CHRG_N", "GND"],
+    "formulas": ["I_CHG ≈ 1200kΩ/R_PROG = 194mA（TP4056 datasheet RPROG 公式）"]
+  },
+  "boundary_ports": [
+    { "name": "VBUS", "direction": "power-out", "net_hint": "USB 5V 主轨" },
+    { "name": "VBAT", "direction": "power-out", "net_hint": "电池 3.7V/充电输出节点" },
+    { "name": "GND", "direction": "ground", "net_hint": "功率地" }
+  ],
+  "layout_constraints": [
+    "J5 插拔朝板外（任务书 §5.2：x0~9/y11.3~18.7，朝左板外）",
+    "J1 插头朝左板外（x0~10/y1.5~7.5）",
+    "U2 TP4056 ESOP8 散热焊盘朝内、接地阵列过孔（§7）",
+    "VBUS/VBAT 载流线宽 ≥1.0mm（§6.1）"
+  ],
+  "verification": {
+    "criteria": [
+      "§3.8 TP4056 唯一料号与引脚序按 datasheet 核对",
+      "§3.10 CC1/CC2 各 5.1k 下拉、TVS 只挂 VBUS",
+      "网表断言：VBUS/VBAT/CHRG_N 成员精确匹配",
+      "DRC 0（铺铜前后各一次）"
+    ],
+    "testbench": ""
+  },
+  "teaching_notes": "充电链拓扑（恒流设定/指示灯低电平亮）、Type-C CC 下拉的物理意义",
+  "verified_in": ""
+}

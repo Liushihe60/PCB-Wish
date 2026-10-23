@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCB-Wish · 项目面板</title>
+<style>
+  :root {
+    --sage: #6B7E72; --sage-soft: #8FA394; --copper: #C3A184; --copper-deep: #A9825F;
+    --cream: #EFEAE0; --paper: #F7F5F0; --card: #FFFFFF; --line: #DED9CD;
+    --ink: #2F3631; --ink-2: #6C7269; --brick: #A9605A;
+    --ok-bg: #ECEFEB; --warn-bg: #F4EDE4;
+  }
+  [data-theme="dark"] {
+    --sage: #8FA394; --sage-soft: #6B7E72; --copper: #C9A582; --copper-deep: #C9A582;
+    --cream: #EFEAE0; --paper: #222724; --card: #2A302B; --line: #3B423C;
+    --ink: #E4E0D6; --ink-2: #9AA096; --brick: #C0837D;
+    --ok-bg: #2E352F; --warn-bg: #37312A;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--paper); color: var(--ink);
+    font: 13px/1.6 "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+    padding: 14px 14px 28px;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+
+  header.top { display: flex; align-items: center; gap: 10px; }
+  header.top svg { flex: none; border-radius: 8px; }
+  header.top h1 { font-size: 15px; margin: 0; font-weight: 650; letter-spacing: .01em; }
+  header.top .sub { display: flex; align-items: center; gap: 8px; margin-top: 2px; flex-wrap: wrap; }
+  .who { flex: 1; min-width: 0; }
+  .chip {
+    display: inline-block; padding: 0 7px; border-radius: 999px; font-size: 11px; line-height: 18px;
+    background: var(--ok-bg); color: var(--sage); border: 1px solid var(--line); white-space: nowrap;
+  }
+  .chip.slug { background: transparent; color: var(--ink-2); font-family: ui-monospace, Consolas, monospace; }
+  .chip.warn { background: var(--warn-bg); color: var(--copper-deep); }
+  #refresh {
+    flex: none; width: 30px; height: 30px; border-radius: 8px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink-2); font-size: 15px;
+  }
+  #refresh:hover { color: var(--sage); border-color: var(--sage-soft); }
+
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .card > h2 {
+    margin: 0 0 10px; font-size: 12px; font-weight: 650; letter-spacing: .08em;
+    color: var(--ink-2); display: flex; align-items: baseline; gap: 8px;
+  }
+  .card > h2 .hint { font-weight: 400; letter-spacing: 0; font-size: 11px; color: var(--ink-2); opacity: .8; }
+
+  /* 门禁流水线 */
+  ol#gates { list-style: none; margin: 0; padding: 0 0 0 4px; }
+  ol#gates li { position: relative; padding: 0 0 2px 24px; }
+  ol#gates li::before {
+    content: ""; position: absolute; left: 6px; top: 20px; bottom: -2px; width: 2px; background: var(--line);
+  }
+  ol#gates li:last-child::before { display: none; }
+  ol#gates li .dot {
+    position: absolute; left: 0; top: 5px; width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--line); background: var(--card);
+  }
+  ol#gates li.st-pass .dot { background: var(--sage); border-color: var(--sage); }
+  ol#gates li.st-fail .dot { background: var(--brick); border-color: var(--brick); }
+  ol#gates li.st-current .dot { border-color: var(--copper); box-shadow: 0 0 0 3px var(--warn-bg); }
+  details.gate { border: 0; }
+  details.gate > summary {
+    list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 8px;
+    padding: 3px 0; border-radius: 6px;
+  }
+  details.gate > summary::-webkit-details-marker { display: none; }
+  details.gate .gid { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--ink-2); flex: none; width: 34px; }
+  details.gate .gt { flex: 1; min-width: 0; }
+  details.gate .when { flex: none; font-size: 11px; color: var(--ink-2); font-family: ui-monospace, Consolas, monospace; }
+  details.gate[open] summary .gt { font-weight: 650; }
+  .ev { margin: 2px 0 8px; padding: 6px 10px; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; }
+  .ev div { font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: var(--ink-2); word-break: break-all; }
+  .ev .note { font-family: inherit; color: var(--ink); font-size: 12px; }
+
+  /* 挂账 */
+  .pend { display: flex; gap: 8px; align-items: flex-start; padding: 7px 10px; border-radius: 8px; margin-bottom: 6px; }
+  .pend.open { background: var(--warn-bg); border-left: 3px solid var(--copper); }
+  .pend.hold { background: transparent; border-left: 3px solid var(--copper); }
+  .pend.shut { background: transparent; border-left: 3px solid var(--line); opacity: .75; }
+  .pend .pid { font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: var(--copper-deep); flex: none; padding-top: 1px; }
+  .pend.shut .pid { color: var(--ink-2); }
+  .pend .pt {
+    flex: 1; min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .pend .ps { flex: none; font-size: 11px; color: var(--ink-2); max-width: 92px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  h3.grp { margin: 4px 0 6px; font-size: 11px; font-weight: 650; color: var(--ink-2); letter-spacing: .06em; }
+  .none { color: var(--ink-2); font-size: 12px; padding: 2px 0 4px; }
+
+  /* 快照 */
+  figure { margin: 0; }
+  figure img { width: 100%; display: block; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); }
+  figure img[hidden] { display: none; }
+  figure figcaption { margin-top: 6px; font-size: 11px; color: var(--ink-2); font-family: ui-monospace, Consolas, monospace; }
+
+  /* 交付物 */
+  ul#deliverables { list-style: none; margin: 0 0 10px; padding: 0; }
+  ul#deliverables li { display: flex; gap: 8px; padding: 2px 0; }
+  ul#deliverables .mk { flex: none; width: 15px; height: 15px; margin-top: 3px; border-radius: 4px; border: 1.5px solid var(--line); }
+  ul#deliverables li.done .mk { background: var(--sage); border-color: var(--sage); position: relative; }
+  ul#deliverables li.done .mk::after {
+    content: ""; position: absolute; left: 4px; top: 1.5px; width: 4px; height: 8px;
+    border: solid var(--cream); border-width: 0 2px 2px 0; transform: rotate(42deg);
+  }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 12px; }
+  .kv dt { color: var(--ink-2); }
+  .kv dd { margin: 0; font-family: ui-monospace, Consolas, monospace; font-size: 11.5px; word-break: break-all; }
+
+  /* 决策 */
+  ul#decisions { list-style: none; margin: 0; padding: 0; }
+  ul#decisions li { display: flex; gap: 8px; padding: 4px 0; border-top: 1px dashed var(--line); }
+  ul#decisions li:first-child { border-top: 0; }
+  ul#decisions .did { flex: none; font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: var(--sage); padding-top: 2px; }
+  ul#decisions .dt2 { flex: 1; min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  ul#decisions .dd { flex: none; font-size: 11px; color: var(--ink-2); font-family: ui-monospace, Consolas, monospace; }
+
+  footer { color: var(--ink-2); font-size: 11px; line-height: 1.7; padding: 0 4px; }
+  footer code { font-family: ui-monospace, Consolas, monospace; }
+  .err { background: var(--warn-bg); border: 1px solid var(--copper); border-radius: 10px; padding: 10px 12px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <svg viewBox="0 0 512 512" width="34" height="34" aria-hidden="true">
+      <rect x="96" y="96" width="320" height="320" rx="42" fill="#6B7E72"/>
+      <circle cx="160" cy="160" r="11" fill="none" stroke="#C3A184" stroke-width="9"/>
+      <circle cx="352" cy="352" r="11" fill="none" stroke="#C3A184" stroke-width="9"/>
+      <path d="M176 348H232L288 264" fill="none" stroke="#C3A184" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="176" cy="348" r="18" fill="#C3A184"/>
+      <path d="M300 144Q314 186 356 200Q314 214 300 256Q286 214 244 200Q286 186 300 144Z" fill="#EFEAE0"/>
+    </svg>
+    <div class="who">
+      <h1 id="proj-title">读取项目状态…</h1>
+      <div class="sub"><span class="chip slug" id="proj-slug"></span><span id="gate-summary"></span></div>
+    </div>
+    <button id="refresh" title="重新读取项目状态" aria-label="刷新">⟳</button>
+  </header>
+
+  <section class="card">
+    <h2>门禁流水线<span class="hint" id="gates-updated"></span></h2>
+    <ol id="gates"></ol>
+  </section>
+
+  <section class="card">
+    <h2>待裁决<span class="hint">豁免与上报问题；裁决权在委托方</span></h2>
+    <div id="pending"></div>
+  </section>
+
+  <section class="card">
+    <h2>板级快照<span class="hint" id="shot-hint"></span></h2>
+    <figure><img id="shot" alt="最终板级渲染"><figcaption id="shot-cap"></figcaption></figure>
+  </section>
+
+  <section class="card">
+    <h2>交付物</h2>
+    <ul id="deliverables"></ul>
+    <dl class="kv" id="artifacts"></dl>
+  </section>
+
+  <section class="card">
+    <h2>最近决策<span class="hint">logs/decisions.md · append-only</span></h2>
+    <ul id="decisions"></ul>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+"use strict";
+
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+function fmtWhen(iso) {
+  if (!iso) return "";
+  const m = iso.match(/(\d\d)-(\d\d)T(\d\d):(\d\d)/);
+  return m ? m[1] + "-" + m[2] + " " + m[3] + ":" + m[4] : "";
+}
+
+function renderGates(state) {
+  const ol = document.getElementById("gates");
+  ol.textContent = "";
+  for (const g of state.gates || []) {
+    const current = state.current_gate === g.id;
+    const li = el("li", "st-" + (current ? "current" : g.status));
+    li.appendChild(el("span", "dot"));
+    const det = el("details", "gate");
+    const sum = el("summary");
+    sum.appendChild(el("span", "gid", g.id));
+    sum.appendChild(el("span", "gt", g.title + (current ? "（当前）" : "")));
+    sum.appendChild(el("span", "when", g.status === "pass" ? fmtWhen(g.at) : g.status));
+    det.appendChild(sum);
+    if ((g.evidence && g.evidence.length) || g.note) {
+      const ev = el("div", "ev");
+      if (g.note) ev.appendChild(el("div", "note", g.note));
+      for (const e of g.evidence || []) ev.appendChild(el("div", null, e));
+      det.appendChild(ev);
+    }
+    li.appendChild(det);
+    ol.appendChild(li);
+  }
+  const passed = (state.gates || []).filter(g => g.status === "pass").length;
+  const sum = document.getElementById("gate-summary");
+  sum.textContent = "";
+  sum.appendChild(el("span", "chip" + (state.current_gate ? " warn" : ""),
+    state.current_gate ? "当前 " + state.current_gate : "全流程已过门 · 已交付"));
+  const span = el("span", "chip slug", passed + "/" + (state.gates || []).length);
+  sum.appendChild(span);
+  document.getElementById("gates-updated").textContent =
+    state.gates_updated ? "gates.json 更新于 " + fmtWhen(state.gates_updated) : "";
+}
+
+function renderPending(state) {
+  const box = document.getElementById("pending");
+  box.textContent = "";
+  const p = state.pending || {};
+  const waivers = p.waivers || [], questions = (p.questions || []).slice().sort((a, b) => (a.open === b.open) ? 0 : (a.open ? -1 : 1));
+  const openQ = questions.filter(q => q.open).length;
+  if (!waivers.length && !questions.length) {
+    box.appendChild(el("div", "none", "无挂账：没有待裁决的豁免或上报问题。"));
+    return;
+  }
+  if (questions.length) {
+    box.appendChild(el("h3", "grp", "上报问题（" + openQ + " 待裁决）"));
+    for (const q of questions) {
+      const row = el("div", "pend " + (q.open ? "open" : "shut"));
+      row.appendChild(el("span", "pid", q.id));
+      row.appendChild(el("span", "pt", q.title));
+      row.appendChild(el("span", "ps", q.status || ""));
+      box.appendChild(row);
+    }
+  }
+  if (waivers.length) {
+    box.appendChild(el("h3", "grp", "豁免记录（" + waivers.length + " 条）· " + (p.waivers_path || "")));
+    for (const w of waivers) {
+      const row = el("div", "pend hold");
+      row.appendChild(el("span", "pid", w.id));
+      row.appendChild(el("span", "pt", w.title));
+      box.appendChild(row);
+    }
+  }
+}
+
+function renderDeliverables(state) {
+  const ul = document.getElementById("deliverables");
+  ul.textContent = "";
+  const m = (state.project || {}).mission;
+  for (const d of (m && m.deliverables) || []) {
+    const li = el("li", d.done ? "done" : "");
+    li.appendChild(el("span", "mk"));
+    li.appendChild(el("span", null, d.label));
+    ul.appendChild(li);
+  }
+  const dl = document.getElementById("artifacts");
+  dl.textContent = "";
+  const a = state.artifacts || {};
+  const rows = [];
+  if (a.gerber_zip) rows.push(["制造文件", a.gerber_zip + "（" + a.gerber_files + " 个 Gerber/钻孔文件）"]);
+  if (a.bom) rows.push(["BOM", a.bom.path + " · " + a.bom.refs + " 位号" + (a.bom.generic ? " + 泛用 0603" : "")]);
+  if (a.assembly && a.assembly.length) rows.push(["装配", a.assembly.length + " 个文件（BOM/坐标 csv+xlsx）"]);
+  if (a.docs && a.docs.length) rows.push(["文档", a.docs.length + " 个文件（网表/IPC/3D/说明）"]);
+  if (a.teaching) rows.push(["教学讲义", a.teaching.pdf + " · " + (a.teaching.pages || "?") + " 页 · 回链 " + (a.teaching.backlink_pct ?? "?") + "%"]);
+  for (const [k, v] of rows) {
+    dl.appendChild(el("dt", null, k));
+    dl.appendChild(el("dd", null, v));
+  }
+}
+
+function renderDecisions(state) {
+  const ul = document.getElementById("decisions");
+  ul.textContent = "";
+  for (const d of ((state.decisions || {}).recent || []).slice().reverse()) {
+    const li = el("li");
+    li.appendChild(el("span", "did", d.id));
+    li.appendChild(el("span", "dt2", d.title));
+    li.appendChild(el("span", "dd", d.date));
+    ul.appendChild(li);
+  }
+}
+
+function render(state, snapshotUrl) {
+  document.documentElement.dataset.theme = state.theme || document.documentElement.dataset.theme;
+  const m = (state.project || {}).mission;
+  document.getElementById("proj-title").textContent = (m && m.title) || state.project.slug || "未知项目";
+  document.getElementById("proj-slug").textContent = state.project.slug;
+  renderGates(state);
+  renderPending(state);
+  renderDeliverables(state);
+  renderDecisions(state);
+  const img = document.getElementById("shot");
+  const cap = document.getElementById("shot-cap");
+  if (snapshotUrl) {
+    img.hidden = false;
+    img.src = snapshotUrl;
+    cap.textContent = state.artifacts.board_snapshot;
+    document.getElementById("shot-hint").textContent = "";
+  } else {
+    img.hidden = true;
+    img.removeAttribute("src");
+    cap.textContent = "（无板级快照）";
+  }
+  document.getElementById("foot").textContent =
+    "数据源：reports/gates.json · MISSION.md · logs/decisions.md · logs/questions.md · reports/waivers_*.md · export/ · teaching/。" +
+    "生成于 " + (state.generated_at || "?") + "。面板只读；任何写操作请回主对话按门禁执行。";
+}
+
+async function hostLoad() {
+  const z = window.zcode;
+  await z.ready();
+  const r = await z.callTool("pcb_wish_state", {});
+  const state = r.structuredContent || JSON.parse(r.content[0].text);
+  let shot = null;
+  try {
+    const s = await z.callTool("pcb_wish_snapshot", {});
+    shot = s.structuredContent ? s.structuredContent.dataUri : s.dataUri;
+  } catch (e) { shot = null; }
+  return [state, shot];
+}
+
+async function load() {
+  try {
+    if (window.zcode && window.zcode.callTool) {
+      const [state, shot] = await hostLoad();
+      render(state, shot);
+      return;
+    }
+  } catch (e) { /* 宿主不可用则退回注入态 */ }
+  const injected = window.__PCBWISH_STATE__;
+  if (injected) render(injected.state, injected.snapshotUrl || null);
+  else render({ project: { slug: "?" }, gates: [], pending: {}, decisions: {}, artifacts: {} }, null);
+}
+
+document.getElementById("refresh").addEventListener("click", load);
+load();
+</script>
+</body>
+</html>

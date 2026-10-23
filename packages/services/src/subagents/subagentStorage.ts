@@ -34,7 +34,7 @@ export async function resolveZCodeStorageRoot(options?: SubagentStorageOptions):
   const storageDir =
     typeof storage.dir === "string" && storage.dir.trim().length > 0
       ? storage.dir.trim()
-      : "~/.zcode";
+      : process.env.ZCODE_STORAGE_DIR?.trim() || "~/.zcode";
   return resolveConfigPath(storageDir, options);
 }
 
@@ -49,10 +49,8 @@ async function readUserCliConfig(
   options?: SubagentStorageOptions,
 ): Promise<Record<string, unknown>> {
   try {
-    const raw = await readFile(
-      join(resolveUserHomeDir(options), ".zcode", "cli", "config.json"),
-      "utf8",
-    );
+    const dataHome = process.env.ZCODE_DATA_BASE_DIR?.trim() || resolveUserHomeDir(options);
+    const raw = await readFile(join(dataHome, ".zcode", "cli", "config.json"), "utf8");
     const parsed = JSON.parse(raw) as unknown;
     return isObjectRecord(parsed) ? parsed : {};
   } catch {

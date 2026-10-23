@@ -1,0 +1,17 @@
+ngspice-43 : circuit level simulation program
+netlist buck_div.sp
+Note: can't find the init file
+
+Circuit: * tps40200 分立级 buck 行为级 testbench
+
+doing analysis at temp 25.000000
+tran 1u 40m 0 10u
+vout_avg = 4.98321e+00
+vout_max = 5.00645e+00
+vout_min = 4.96023e+00
+i_l_avg = 9.87120e-01
+t_rise_90 = 1.2e-03
+Failed measurement: ss_missing
+ss_missing = not found
+binary raw file "buck_div.raw" written
+Total iteration 123456
