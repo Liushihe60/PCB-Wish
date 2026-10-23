@@ -154,7 +154,7 @@
 \section*{创作背景}
 \addcontentsline{toc}{section}{创作背景}
 
-PCB-Wish 是一个面向 PCB 设计的桌面智能体系统：用户用自然语言描述一块绘制难度不大的目标板卡，agent 系统通过分阶段工作完成需求澄清、选型、原理图与 PCB 绘制和检查验证，并导出可交付制造的工程文件；用户显式要求时还会生成配套教学讲义。本项目的板卡设计与交付流程全部使用国产生产工具：桌面端基于 ZCode，设计执行使用嘉立创EDA专业版。
+PCB-Wish 是一个面向 PCB 设计的桌面智能体系统：用户用自然语言描述一块绘制难度不大的目标板卡，agent 系统通过分阶段工作完成需求澄清、选型、原理图与 PCB 绘制和检查验证，并导出可交付制造的工程文件；用户显式要求时还会生成配套教学讲义。本项目的板卡设计与交付流程全部使用国产生产工具：桌面端基于 ZCode 的开源框架进行任务特化的修改，设计执行使用嘉立创EDA专业版。
 
 它的灵感来源于工科创课程的教学全过程。工科创课程中已经涉及电子设计、板卡绘制等内容，但无法覆盖每个人的需求和兴趣。
 
@@ -250,14 +250,6 @@ Python 需单独安装，安装后在命令行执行 \code{python --version} 应
 \caption{PCB-Wish 首页。选择工作区后，在输入框中描述板卡需求。}
 \end{figure}
 
-\begin{figure}[htbp]
-\centering
-\begingroup\setlength{\fboxsep}{0.8pt}%
-\fcolorbox{line}{white}{\includegraphics[width=0.92\textwidth]{app-conversation.png}}%
-\endgroup
-\caption{PCB-Wish 桌面版对话界面：左侧为任务入口，右侧为自然语言输入、智能体回复与模型选择。}
-\end{figure}
-
 \subsection{第二步：描述需求}
 
 使用日常语言描述板卡，建议覆盖以下六项：功能、供电、接口、尺寸与层数、焊接方式、打样渠道与成本。信息不完整时，系统会在受理阶段提问。完整示例见附录 A。
@@ -277,6 +269,14 @@ Python 需单独安装，安装后在命令行执行 \code{python --version} 应
   \item 保存工程等少数操作需用户在客户端完成。
   \item 中等复杂度板卡通常需要数小时至数十小时，运行期间请保持窗口开启。
 \end{itemize}
+
+\begin{figure}[htbp]
+\centering
+\begingroup\setlength{\fboxsep}{0.8pt}%
+\fcolorbox{line}{white}{\includegraphics[width=0.92\textwidth]{app-conversation.png}}%
+\endgroup
+\caption{PCB-Wish 桌面版对话界面：左侧为任务入口，右侧为自然语言输入、智能体回复与模型选择。}
+\end{figure}
 
 \subsection{第五步：检查并接收交付物}
 
@@ -321,6 +321,14 @@ projects/<slug>/teaching/lecture.pdf & 教学讲义（用户明确要求后生�
 \draw[arrow,dashed] (n5) -- (n6);
 \end{tikzpicture}
 \caption{系统主线流程。教学讲义为按需分支。}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begingroup\setlength{\fboxsep}{0.8pt}%
+\fcolorbox{line}{white}{\includegraphics[width=0.88\textwidth]{app-workflow.png}}%
+\endgroup
+\caption{PCB-Wish 实际运行状态：受理实际板卡需求后进入澄清流程，任务已创建、技能已加载，系统正在集中提问。}
 \end{figure}
 
 \subsection{角色与产出}
@@ -519,7 +527,7 @@ teaching/lecture.pdf & 讲义（用户明确要求后生成） \\
 \subsection{上游与桌面端}
 
 \begin{itemize}
-  \item \textbf{ZCode}（\code{zai-org/ZCode}，Apache-2.0）：本仓库上游，提供桌面应用、智能体命令行、运行时与基础设施。
+  \item \textbf{ZCode}（\code{zai-org/ZCode}，Apache-2.0）：本仓库上游开源框架；PCB-Wish 在此基础上做任务特化修改，并沿用它提供的桌面应用、智能体命令行、运行时与基础设施。
   \item \textbf{Electron}、\textbf{Node.js}、\textbf{React}、\textbf{TypeScript}、\textbf{Vite}、\textbf{pnpm}、\textbf{Vitest}、\textbf{Zustand}：桌面端与开发工具链。
 \end{itemize}
 

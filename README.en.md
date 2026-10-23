@@ -17,11 +17,11 @@
 
 PCB-Wish is a desktop agent system for PCB design. Users describe a hardware goal in natural language; the system handles requirement clarification, component selection, schematic capture, PCB layout and routing, verification, and finally exports Gerber, drill, BOM, pick-and-place, and inspection reports. If the user explicitly requests a teaching lecture, the system also produces a LaTeX-typeset PDF lecture after the fabrication files are complete.
 
-The project is built on the ZCode desktop application. The domain plugin lives in `apps/zcode-cli/packages/pcb-wish-plugin/`, and design execution relies on LCEDA Pro (JLCEDA Professional Edition).
+The project is a task-specific modification of the ZCode open-source framework. The domain plugin lives in `apps/zcode-cli/packages/pcb-wish-plugin/`, and design execution relies on LCEDA Pro (JLCEDA Professional Edition).
 
 ## Background
 
-Users describe a target board of modest drawing difficulty in natural language. The agent works in stages to complete requirement clarification, component selection, schematic and PCB drawing, and verification, then exports fabrication-ready engineering files. It also produces an accompanying lecture when the user explicitly requests one. The board design and delivery workflow uses only domestic production tools: the desktop application is based on ZCode, and design execution uses LCEDA Pro.
+Users describe a target board of modest drawing difficulty in natural language. The agent works in stages to complete requirement clarification, component selection, schematic and PCB drawing, and verification, then exports fabrication-ready engineering files. It also produces an accompanying lecture when the user explicitly requests one. The board design and delivery workflow uses only domestic production tools: the desktop application is a task-specific modification of the ZCode open-source framework, and design execution uses LCEDA Pro.
 
 PCB-Wish was inspired by the full teaching process of the Engineering Innovation (工科创) course. The course already covers electronic design and board drawing, but cannot cover everyone's needs and interests.
 
