@@ -886,3 +886,11 @@ exceptions:
       - packages/ui/src/settings/DynamicWorkflowModeSetting.tsx
       - packages/ui/src/store/dynamicWorkflowAvailabilityStore.ts
     reason: Admitted upstream files edited only to let the user's dynamic workflow mode choice always win and keep the settings row visible; adopting packages/shared/src and packages/ui/src needs a separate module boundary refactor.
+  - id: pcb-wish-fork-domain-additions
+    rule: unmanaged-new-file
+    paths:
+      - apps/zcode-cli/packages/adapters/src/data-home.ts
+      - apps/zcode-cli/packages/core/src/context/sections/pcb-wish-sop.ts
+      - packages/ui/src/components/ui/pcbwish-logo.tsx
+      - packages/ui/src/v4/pcbWishSuggestedPrompts.ts
+    reason: PCB-Wish fork 的最小领域增件（agent 数据根助手、受理 SOP 上下文段、品牌标记、首页推荐语料）；接管 adapters/core/ui 整包模块边界不在本次范围，沿用既有例外机制逐文件登记。
