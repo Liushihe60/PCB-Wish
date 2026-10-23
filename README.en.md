@@ -21,7 +21,7 @@ The project is built on the ZCode desktop application. The domain plugin lives i
 
 ## Background
 
-Users describe a target board of modest drawing difficulty in natural language. The agent works in stages to complete requirement clarification, component selection, schematic and PCB drawing, and verification, then exports fabrication-ready engineering files. It also produces an accompanying lecture when the user explicitly requests one.
+Users describe a target board of modest drawing difficulty in natural language. The agent works in stages to complete requirement clarification, component selection, schematic and PCB drawing, and verification, then exports fabrication-ready engineering files. It also produces an accompanying lecture when the user explicitly requests one. The board design and delivery workflow uses only domestic production tools: the desktop application is based on ZCode, and design execution uses LCEDA Pro.
 
 PCB-Wish was inspired by the full teaching process of the Engineering Innovation (工科创) course. The course already covers electronic design and board drawing, but cannot cover everyone's needs and interests.
 
