@@ -21,11 +21,9 @@ The project is built on the ZCode desktop application. The domain plugin lives i
 
 ## Background
 
-PCB-Wish grew out of a full engineering-innovation course workflow. Students are expected to start from requirements and deliver a working board, but the process involves extensive lookup, component selection, item-by-item comparison, and repetitive drawing. Beginners can spend most of their time on mechanical steps instead of numerical design calculations, component trade-offs, and verification evidence.
+PCB-Wish was inspired by the full teaching process of the Engineering Innovation (工科创) course. The author hopes that most classmates in the same department, after taking the course and gaining some electronics foundation, can use large-model tools to fully try building a board with a function they are interested in, and learn numerical calculation, component selection, and other methods of electronic design in the process.
 
-The project lets the agent absorb that repetitive work so students can focus on requirement judgment, design decisions, and acceptance. A student describes the target board in natural language; the system structures the requirements, completes selection and design, checks each gate, and produces a teaching lecture when explicitly requested. The lecture explains operating principles, design rationale, layout and routing notes, and verification results by module, and can support course teaching, lab guidance, or project presentations.
-
-Typical scenarios include course projects, undergraduate innovation projects, lab onboarding, and small-batch prototyping. Teachers provide the task book and course requirements; students define needs and accept results; the system executes the workflow and organizes materials; engineering judgment and final sign-off remain human. The project aims to ground "AI + teaching and learning" in an inspectable, traceable engineering chain rather than a generated paragraph or image.
+The author therefore built this agent production tool, hoping to help classmates through engineering practice and the accompanying lecture. The system workflow comes from the author's complete board-fabrication process. The project also tries to ground "AI + teaching and learning" in this process: using large-model tools for engineering practice and the accompanying lecture to help students.
 
 ## Core capabilities
 
