@@ -3,13 +3,11 @@ import { isApiKeyAccess } from "@zcode/provider";
 import { Loader2Icon, TriangleAlertIcon } from "lucide-react";
 import { BIGMODEL_PROVIDER_ID, ZAI_PROVIDER_ID } from "@zcode/shared";
 import {
-  TID_LOGIN_API_KEY_CANCEL_BUTTON,
   TID_LOGIN_API_KEY_CONTINUE_BUTTON,
   TID_LOGIN_API_KEY_ERROR,
   TID_LOGIN_API_KEY_INPUT,
   TID_LOGIN_API_KEY_PROVIDER_ITEM,
   TID_LOGIN_API_KEY_PROVIDER_TRIGGER,
-  TID_LOGIN_API_KEY_SKIP_BUTTON,
   testId,
 } from "@zcode/shared/test-ids";
 import { Alert, AlertDescription } from "@/components/ui/alert.js";
@@ -30,7 +28,6 @@ import { logger } from "@/logger.js";
 import { renderOAuthProviderIcon } from "@/lib/oauthProviderIcon.js";
 import {
   buildLoginApiKeyDefaultModelPreferenceFromSelection,
-  buildLoginApiKeySkipSettings,
   resolveLoginApiKeyDefaultProvider,
   resolveLoginApiKeyTemplateId,
   resolveLoginApiKeyProviderLabel,
@@ -40,22 +37,19 @@ import {
 import { useZCodeStore } from "@/store/StoreProvider.js";
 
 interface LoginApiKeyFormProps {
-  onCancel: () => void;
   onSaved: () => void | Promise<void>;
-  onSkipped: () => void | Promise<void>;
 }
 
-export function LoginApiKeyForm({ onCancel, onSaved, onSkipped }: LoginApiKeyFormProps) {
+export function LoginApiKeyForm({ onSaved }: LoginApiKeyFormProps) {
   const { intl, locale } = useZCodeIntl();
   const platform = usePlatform();
-  const { modelSelectionService, providerSettingsService, settingService } = useServices();
+  const { modelSelectionService, providerSettingsService } = useServices();
   const markApiKeyLoginSuccess = useZCodeStore((state) => state.markApiKeyLoginSuccess);
   const [providerChoice, setProviderChoice] = useState<ApiKeyProviderChoice>(() =>
     resolveLoginApiKeyDefaultProvider(locale),
   );
   const [apiKeyValue, setApiKeyValue] = useState("");
   const [saving, setSaving] = useState(false);
-  const [skipping, setSkipping] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const providerSettingsRead = useProviderSettingsView();
   const providerSettingsView =
@@ -121,33 +115,7 @@ export function LoginApiKeyForm({ onCancel, onSaved, onSkipped }: LoginApiKeyFor
     }
   };
 
-  const skipApiKeyProvider = async () => {
-    setSkipping(true);
-    setError(null);
-    try {
-      // 跳过只表示用户确认当前 provider family 运行域，不能写入空 API Key
-      // 或触发 API Key 登录成功事件，否则后续模型选择会误以为已有可用凭据。
-      await settingService.update(buildLoginApiKeySkipSettings(providerChoice, Date.now()));
-      await onSkipped();
-    } catch (skipError) {
-      logger.error("[LoginEntry] 跳过 API Key 登录失败", {
-        providerChoice,
-        error: skipError,
-      });
-      setError(
-        intl.formatMessage(
-          { id: "login.apiKey.skipError" },
-          {
-            error: skipError instanceof Error ? skipError.message : String(skipError),
-          },
-        ),
-      );
-    } finally {
-      setSkipping(false);
-    }
-  };
-
-  const busy = saving || skipping;
+  const busy = saving;
 
   return (
     <div className="space-y-4">
@@ -256,28 +224,6 @@ export function LoginApiKeyForm({ onCancel, onSaved, onSkipped }: LoginApiKeyFor
         >
           {saving ? <Loader2Icon className="size-4 animate-spin" /> : null}
           {intl.formatMessage({ id: "login.apiKey.continue" })}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          className="h-10 w-full text-ui-base"
-          size="lg"
-          data-testid={TID_LOGIN_API_KEY_CANCEL_BUTTON}
-          disabled={busy}
-          onClick={onCancel}
-        >
-          {intl.formatMessage({ id: "login.apiKey.cancel" })}
-        </Button>
-        <Button
-          type="button"
-          variant="link"
-          className="h-7 w-full text-ui-base text-foreground-subtle hover:text-foreground"
-          data-testid={TID_LOGIN_API_KEY_SKIP_BUTTON}
-          disabled={busy}
-          onClick={() => void skipApiKeyProvider()}
-        >
-          {skipping ? <Loader2Icon className="size-4 animate-spin" /> : null}
-          {intl.formatMessage({ id: "login.skip" })}
         </Button>
       </div>
     </div>

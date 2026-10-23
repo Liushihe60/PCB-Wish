@@ -7,8 +7,8 @@
  *
  * Options:
  *   --snapshot <path>   Path to the legacy snapshot JSON file (required)
- *   --task-index <path> Task index sqlite path. Default: ~/.zcode/v2/tasks-index.sqlite
- *   --cli-db <path>     New ZCode session sqlite path. Default: ~/.zcode/cli/db/db.sqlite
+ *   --task-index <path> Task index sqlite path. Default: ~/.pcbwish/v2/tasks-index.sqlite
+ *   --cli-db <path>     New ZCode session sqlite path. Default: ~/.pcbwish/cli/db/db.sqlite
  *   --dry-run           Print what would be done without writing
  */
 
@@ -25,8 +25,8 @@ const { DatabaseSync } = await import("node:sqlite");
 process.emitWarning = originalEmitWarning;
 
 const ZCODE_PROVIDER = "glm";
-const defaultTaskIndexPath = join(homedir(), ".zcode", "v2", "tasks-index.sqlite");
-const defaultCliDbPath = join(homedir(), ".zcode", "cli", "db", "db.sqlite");
+const defaultTaskIndexPath = join(homedir(), ".pcbwish", "v2", "tasks-index.sqlite");
+const defaultCliDbPath = join(homedir(), ".pcbwish", "cli", "db", "db.sqlite");
 
 function parseArgs(argv) {
   const args = {

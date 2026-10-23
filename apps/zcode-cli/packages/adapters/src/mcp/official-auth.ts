@@ -519,7 +519,7 @@ function describeJsonRpc(body: unknown): {
       typeof record.id === "number" || typeof record.id === "string" ? record.id : undefined;
     const params = isPlainRecord(record.params) ? record.params : undefined;
     const toolName = params && typeof params.name === "string" ? params.name : undefined;
-    // mcpRequestMeta 把 trace 写在 params._meta 上（同时有扁平键与 com.zcode/ 命名空间键）。
+    // mcpRequestMeta 把 trace 写在 params._meta 上（同时有扁平键与 com.pcbwish/ 命名空间键）。
     const meta = params && isPlainRecord(params._meta) ? params._meta : undefined;
     const traceId = meta && typeof meta.trace_id === "string" ? meta.trace_id : undefined;
     // span 才是"一次 tool call"的粒度：traceId 覆盖整个顶层 session，同一 session 里的

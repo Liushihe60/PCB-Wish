@@ -701,6 +701,25 @@ export function ModelProviderSection({
       setSelectedNodeKey,
       intl,
     });
+  // PCB Wish 仅支持 API Key：设置页只保留自建 Provider，隐藏账号/OAuth 与套餐入口。
+  const visibleNavigationGroups = useMemo(
+    () => navigationGroups.filter((group) => group.id === "custom"),
+    [navigationGroups],
+  );
+  const visibleNavigationItems = useMemo(
+    () => navigationItems.filter((item) => item.type === "custom"),
+    [navigationItems],
+  );
+  const visibleSelectedNavItem = selectedNavItem?.type === "custom" ? selectedNavItem : null;
+  useEffect(() => {
+    if (visibleSelectedNavItem) {
+      return;
+    }
+    const fallback = visibleNavigationItems[0];
+    if (fallback) {
+      setSelectedNodeKey(fallback.key);
+    }
+  }, [setSelectedNodeKey, visibleNavigationItems, visibleSelectedNavItem]);
   const selectedPlanAccessKey =
     selectedNavItem?.type === "codingPlan" || selectedNavItem?.type === "teamPlan"
       ? selectedNavItem.key
@@ -1120,7 +1139,7 @@ export function ModelProviderSection({
       }}
       addProviderLabel={intl.formatMessage({ id: "settings.modelProvider.addProviderAction" })}
       onAddProvider={() => setTemplatePickerOpen(true)}
-      navigationGroups={navigationGroups}
+      navigationGroups={visibleNavigationGroups}
       selectedNodeKey={selectedNodeKey}
       onSelectNavItem={handleSelectNavItem}
       onReorderProviderIds={handleReorderProviderIds}
@@ -1151,8 +1170,8 @@ export function ModelProviderSection({
         <ModelProviderSectionDetail
           connectionSelections={effectiveConnectionSelections}
           providerSettingsView={providerSettingsView}
-          selectedNavItem={selectedNavItem}
-          navigationItems={navigationItems}
+          selectedNavItem={visibleSelectedNavItem}
+          navigationItems={visibleNavigationItems}
           connectionSettingsFailed={familyConnectionSettingsFailed}
           startPlanSubscriptionCount={(() => {
             const providerId =

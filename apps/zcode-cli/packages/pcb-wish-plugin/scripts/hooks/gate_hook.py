@@ -12,7 +12,7 @@
   R2 原理图门未过 → 禁止 PCB 阶段写操作（G2 未过就摆板，原理图还会改，布局白做）
   R3 禁止直接手改 gates.json（状态必须由 gate.py 写，否则审计链断裂）
 
-stdin: ZCode hook JSON（含 snake_case 兼容字段）
+stdin: PCB Wish hook JSON（含 snake_case 兼容字段）
 stdout: {"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny",
                                "permissionDecisionReason":"..."}}
 退出码 0=放行（含所有异常路径），2=阻断（兼容 Claude 语义）

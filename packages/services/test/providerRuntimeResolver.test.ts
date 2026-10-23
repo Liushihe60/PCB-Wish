@@ -99,7 +99,7 @@ describe("providerRuntimeResolver glm workdir discovery", () => {
     const sandboxRoot = mkdtempSync(join(tmpdir(), "zcode-glm-binary-"));
     createdDirs.push(sandboxRoot);
     // Keep the fallback test hermetic: a developer may already have a valid
-    // ~/.zcode/server/agents runtime, which intentionally outranks repository
+    // ~/.pcbwish/server/agents runtime, which intentionally outranks repository
     // bundled resources in production.
     process.env.HOME = sandboxRoot;
 
@@ -155,7 +155,7 @@ describe("providerRuntimeResolver workspace config dir identity", () => {
     const workspaceIdentity = "remote:ssh:localhost:2223:dev:/home/dev";
 
     expect(resolveProviderConfigDir("glm", workspacePath, workspaceIdentity)).toBe(
-      join(home, ".zcode", "cli"),
+      join(home, ".pcbwish", "cli"),
     );
   });
 });
@@ -187,7 +187,7 @@ describe("providerRuntimeResolver clean env", () => {
     createdDirs.push(dataBaseDir);
     setDataBaseDir(dataBaseDir);
 
-    const env = buildCleanEnv("glm", join(dataBaseDir, ".zcode", "cli"));
+    const env = buildCleanEnv("glm", join(dataBaseDir, ".pcbwish", "cli"));
 
     expect(env.HOME).toBe(dataBaseDir);
     if (process.platform === "win32") {

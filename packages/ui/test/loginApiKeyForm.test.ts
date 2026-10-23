@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   buildLoginApiKeyDefaultModelPreferenceFromSelection,
-  buildLoginApiKeySkipSettings,
   resolveLoginApiKeyDefaultProvider,
   resolveHydratedLoginApiKeyValue,
   resolveLoginApiKeyTemplateId,
@@ -18,14 +17,6 @@ describe("LoginApiKeyForm provider update helpers", () => {
   it("按弹窗里的提供方选择写入对应内置 provider id", () => {
     expect(resolveLoginApiKeyTemplateId("zai")).toBe("zai-api");
     expect(resolveLoginApiKeyTemplateId("bigmodel")).toBe("bigmodel-api");
-  });
-
-  it("跳过 API key 时只写入当前 provider family domain", () => {
-    expect(buildLoginApiKeySkipSettings("bigmodel", 300)).toEqual({
-      providerFamilyDomain: "bigmodel",
-      providerFamilyDomainUpdatedAt: 300,
-      providerFamilyDomainMigrated: true,
-    });
   });
 
   it("只有输入框为空且 provider 有 URL 时展示获取 API key 链接", () => {

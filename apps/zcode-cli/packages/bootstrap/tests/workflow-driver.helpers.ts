@@ -48,7 +48,7 @@ import type { AgentRuntimeWorkflowDriverDeps } from "../src/app/workflow-driver-
 import type { WorkflowConcurrencyPort } from "../src/app/workflow-concurrency-governor.js";
 
 /**
- * 独立的 run cwd：harness 把入口文件写到 `<cwd>/.zcode/workflow-runs/<runId>.mjs` 且保留，
+ * 独立的 run cwd：harness 把入口文件写到 `<cwd>/.pcbwish/workflow-runs/<runId>.mjs` 且保留，
  * 用 process.cwd() 会把存档留在包目录里，并让并行测试文件互相覆写同名入口文件。
  */
 const TEST_CWD: string = mkdtempSync(join(tmpdir(), "dwf-bootstrap-test-cwd-"));

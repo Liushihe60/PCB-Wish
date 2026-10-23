@@ -167,7 +167,7 @@ export class SourceServerDirectory {
       options.migrateControllerIdentity ??
       (async (input) =>
         await migrateControllerRemoteWorkspaceIdentity({
-          dbPath: join(getDataBaseDir(), ".zcode", "v2", "tasks-index.sqlite"),
+          dbPath: join(getDataBaseDir(), ".pcbwish", "v2", "tasks-index.sqlite"),
           ...input,
         }));
   }

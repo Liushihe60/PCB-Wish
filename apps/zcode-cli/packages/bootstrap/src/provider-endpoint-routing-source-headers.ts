@@ -47,7 +47,7 @@ function resolveClientTimezone(): string {
 
 function resolveTelemetryStateFile(env: NodeJS.ProcessEnv): string {
   const dataBaseDir = env[ZCODE_DATA_BASE_DIR_ENV_KEY]?.trim() || homedir();
-  return join(dataBaseDir, ".zcode", "v2", "telemetry-state.json");
+  return join(dataBaseDir, ".pcbwish", "v2", "telemetry-state.json");
 }
 
 async function readExistingDeviceMid(

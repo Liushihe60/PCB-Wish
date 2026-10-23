@@ -21,7 +21,7 @@ export async function resolveUserSubagentRoot(options?: SubagentStorageOptions):
 }
 
 export function resolveWorkspaceSubagentRoot(workspacePath: string): string {
-  return join(workspacePath, ".zcode", "agents");
+  return join(workspacePath, ".pcbwish", "agents");
 }
 
 export async function resolveSubagentStateFile(options?: SubagentStorageOptions): Promise<string> {
@@ -34,7 +34,7 @@ export async function resolveZCodeStorageRoot(options?: SubagentStorageOptions):
   const storageDir =
     typeof storage.dir === "string" && storage.dir.trim().length > 0
       ? storage.dir.trim()
-      : process.env.ZCODE_STORAGE_DIR?.trim() || "~/.zcode";
+      : process.env.ZCODE_STORAGE_DIR?.trim() || "~/.pcbwish";
   return resolveConfigPath(storageDir, options);
 }
 
@@ -50,7 +50,7 @@ async function readUserCliConfig(
 ): Promise<Record<string, unknown>> {
   try {
     const dataHome = process.env.ZCODE_DATA_BASE_DIR?.trim() || resolveUserHomeDir(options);
-    const raw = await readFile(join(dataHome, ".zcode", "cli", "config.json"), "utf8");
+    const raw = await readFile(join(dataHome, ".pcbwish", "cli", "config.json"), "utf8");
     const parsed = JSON.parse(raw) as unknown;
     return isObjectRecord(parsed) ? parsed : {};
   } catch {

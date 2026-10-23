@@ -28,9 +28,9 @@ export const OFFICIAL_MCP_AUTH_HEADER_NAMES = {
  *
  * 这是与插件进程之间的**跨语言协议常量**——Plugin 侧（如插件的 Python server）
  * 按同一字符串读取。改名即破坏所有已发布插件，等同于协议 breaking change。
- * 命名空间前缀沿用 `com.zcode/`，与既有的 `com.zcode/request-context` 一致。
+ * 命名空间前缀沿用 `com.pcbwish/`，与既有的 `com.pcbwish/request-context` 一致。
  */
-export const OFFICIAL_MCP_AUTH_META_KEY = "com.zcode/official-mcp-auth" as const;
+export const OFFICIAL_MCP_AUTH_META_KEY = "com.pcbwish/official-mcp-auth" as const;
 
 /**
  * 静态 Plugin `headers` 中禁止出现的保留头（小写，比较时大小写不敏感）。

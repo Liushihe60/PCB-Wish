@@ -399,7 +399,7 @@ describe("export logs archive", () => {
           await import("@desktop/main/exportLogs.js");
 
         const sourceDir = join(tempDir, "source");
-        const zcodeCliLogDir = join(fakeHome, ".zcode", "cli", "log");
+        const zcodeCliLogDir = join(fakeHome, ".pcbwish", "cli", "log");
         await mkdir(join(sourceDir, "logs"), { recursive: true });
         await mkdir(zcodeCliLogDir, { recursive: true });
         await writeFile(join(sourceDir, "logs", "main.log"), "main-log", "utf-8");
@@ -411,7 +411,7 @@ describe("export logs archive", () => {
 
         const entries = await readZipEntries(zipPath);
         expect(entries.get("logs/main.log")).toBe("main-log");
-        expect(entries.get(".zcode/cli/log/agent.log")).toBe("zcode-cli-agent-log");
+        expect(entries.get(".pcbwish/cli/log/agent.log")).toBe("zcode-cli-agent-log");
       });
     } finally {
       if (originalHome == null) {
@@ -435,7 +435,7 @@ describe("export logs archive", () => {
           await import("@desktop/main/exportLogs.js");
 
         const sourceDir = join(tempDir, "source");
-        const zcodeCliDir = join(fakeHome, ".zcode", "cli");
+        const zcodeCliDir = join(fakeHome, ".pcbwish", "cli");
         const rolloutDir = join(zcodeCliDir, "rollout");
         const debugDir = join(zcodeCliDir, "debug");
         await mkdir(join(sourceDir, "logs"), { recursive: true });
@@ -454,9 +454,9 @@ describe("export logs archive", () => {
         await writeLogArchiveZip(zipPath, artifacts, createWriteZipTestOptions(tempDir));
 
         const entries = await readZipEntries(zipPath);
-        expect(entries.get(".zcode/cli/config.json")).toBe('{"model":"glm"}');
-        expect(entries.get(".zcode/cli/rollout/model-io-recent.jsonl")).toBe("rollout-recent");
-        expect(entries.has(".zcode/cli/debug/model-io-old.jsonl")).toBe(false);
+        expect(entries.get(".pcbwish/cli/config.json")).toBe('{"model":"glm"}');
+        expect(entries.get(".pcbwish/cli/rollout/model-io-recent.jsonl")).toBe("rollout-recent");
+        expect(entries.has(".pcbwish/cli/debug/model-io-old.jsonl")).toBe(false);
       });
     } finally {
       if (originalHome == null) {
@@ -471,7 +471,7 @@ describe("export logs archive", () => {
   it("导出日志应带上 Computer Use Helper 诊断日志但绝不带 .tokens 凭据", async () => {
     // Bugfix 取证：一次真实反馈日志包里 grep "background keyboard begin rejected" 命中 0，
     // 而那次会话 begin 确实被拒两次 —— Helper 的结构化诊断写在
-    // ~/.zcode/computer-use/run/*.sock.exit.log，既不在 app data 也不在 ~/.zcode/cli 下。
+    // ~/.pcbwish/computer-use/run/*.sock.exit.log，既不在 app data 也不在 ~/.pcbwish/cli 下。
     const originalHome = process.env["HOME"];
     try {
       await withTempDir(async (tempDir) => {
@@ -483,7 +483,7 @@ describe("export logs archive", () => {
           await import("@desktop/main/exportLogs.js");
 
         const sourceDir = join(tempDir, "source");
-        const runDir = join(fakeHome, ".zcode", "computer-use", "run");
+        const runDir = join(fakeHome, ".pcbwish", "computer-use", "run");
         const tokenDir = join(runDir, ".tokens");
         await mkdir(join(sourceDir, "logs"), { recursive: true });
         await mkdir(tokenDir, { recursive: true });
@@ -505,11 +505,11 @@ describe("export logs archive", () => {
         await writeLogArchiveZip(zipPath, artifacts, createWriteZipTestOptions(tempDir));
 
         const entries = await readZipEntries(zipPath);
-        expect(entries.get(".zcode/computer-use/run/standalone-abc123.sock.exit.log")).toContain(
+        expect(entries.get(".pcbwish/computer-use/run/standalone-abc123.sock.exit.log")).toContain(
           "begin rejected",
         );
-        expect(entries.has(".zcode/computer-use/run/.tokens/broker.token")).toBe(false);
-        expect(entries.has(".zcode/computer-use/run/standalone-abc123.sock")).toBe(false);
+        expect(entries.has(".pcbwish/computer-use/run/.tokens/broker.token")).toBe(false);
+        expect(entries.has(".pcbwish/computer-use/run/standalone-abc123.sock")).toBe(false);
         // 防呆：凭据内容不得以任何路径出现在包里。
         expect([...entries.values()].join("\n")).not.toContain("super-secret-token");
       });
@@ -536,7 +536,7 @@ describe("export logs archive", () => {
 
         const sourceDir = join(tempDir, "source");
         const feedbackLogDir = join(tempDir, "feedback-logs");
-        const zcodeCliDir = join(fakeHome, ".zcode", "cli");
+        const zcodeCliDir = join(fakeHome, ".pcbwish", "cli");
         await mkdir(join(sourceDir, "logs"), { recursive: true });
         await mkdir(join(sourceDir, "agent-config", "codex", "workspace-a"), {
           recursive: true,
@@ -605,8 +605,8 @@ describe("export logs archive", () => {
         expect(entries.has("credentials.json")).toBe(false);
         expect(entries.has("agent-config/codex/workspace-a/config.toml")).toBe(false);
         expect(entries.has("certs/app-ca.pem")).toBe(false);
-        expect(entries.get(".zcode/cli/log/agent.log")).toBe("agent-log");
-        const configEntry = entries.get(".zcode/cli/config.json");
+        expect(entries.get(".pcbwish/cli/log/agent.log")).toBe("agent-log");
+        const configEntry = entries.get(".pcbwish/cli/config.json");
         expect(configEntry).toContain('"model":"glm"');
         expect(configEntry).toContain('"enabledPlugins"');
         expect(configEntry).toContain('"example-plugin@example":true');
@@ -614,9 +614,9 @@ describe("export logs archive", () => {
         expect(configEntry).not.toContain("plugin-secret");
         expect(configEntry).not.toContain('"options"');
         expect(configEntry).toContain('"locale":"zh-CN"');
-        expect(entries.get(".zcode/cli/rollout/trace.jsonl")).toBe("rollout-today");
-        expect(entries.has(".zcode/cli/rollout/old-trace.jsonl")).toBe(false);
-        expect(entries.has(".zcode/cli/debug/trace.jsonl")).toBe(false);
+        expect(entries.get(".pcbwish/cli/rollout/trace.jsonl")).toBe("rollout-today");
+        expect(entries.has(".pcbwish/cli/rollout/old-trace.jsonl")).toBe(false);
+        expect(entries.has(".pcbwish/cli/debug/trace.jsonl")).toBe(false);
       });
     } finally {
       if (originalHome == null) {
@@ -677,12 +677,12 @@ describe("export logs archive", () => {
           oldTime,
         );
         await writeTimedFile(
-          join(fakeHome, ".zcode", "cli", "log", "recent.log"),
+          join(fakeHome, ".pcbwish", "cli", "log", "recent.log"),
           "recent-zcode-cli-log",
           recentTime,
         );
         await writeTimedFile(
-          join(fakeHome, ".zcode", "cli", "log", "old.log"),
+          join(fakeHome, ".pcbwish", "cli", "log", "old.log"),
           "old-zcode-cli-log",
           oldTime,
         );
@@ -693,7 +693,7 @@ describe("export logs archive", () => {
         const archivePaths = artifacts.files.map((file) => file.archivePath);
 
         expect(archivePaths).toEqual(
-          expect.arrayContaining(["logs/recent.log", ".zcode/cli/log/recent.log"]),
+          expect.arrayContaining(["logs/recent.log", ".pcbwish/cli/log/recent.log"]),
         );
         expect(archivePaths).not.toContain("logs/old.log");
         expect(archivePaths).not.toContain("agent-config/codex/workspace-a/sessions/recent.jsonl");
@@ -702,7 +702,7 @@ describe("export logs archive", () => {
         expect(archivePaths).not.toContain("agent-config/claude/workspace-a/debug/old.txt");
         expect(archivePaths).not.toContain("sessions/recent.json");
         expect(archivePaths).not.toContain("sessions/old.json");
-        expect(archivePaths).not.toContain(".zcode/cli/log/old.log");
+        expect(archivePaths).not.toContain(".pcbwish/cli/log/old.log");
       });
     } finally {
       if (originalHome == null) {
@@ -1117,7 +1117,7 @@ describe("export logs archive", () => {
       });
 
       try {
-        // Bugfix: exportLogs 会额外扫描 ~/.zcode/cli/log。
+        // Bugfix: exportLogs 会额外扫描 ~/.pcbwish/cli/log。
         // 这里如果沿用真实 HOME，测试耗时会被本机调试日志体积放大，full suite 下容易踩到默认 5s 超时。
         // 固定到临时 HOME 后，测试只验证“不可读目录应被跳过”这一条行为，避免环境耦合导致的随机超时。
         process.env["HOME"] = fakeHome;

@@ -146,7 +146,7 @@ export function migrateProjects(db: DatabaseSync, context: ProjectMigrationConte
     for (const row of db
       .prepare(
         `SELECT root_path FROM tasks WHERE host_id=? AND project_id IS NULL AND deleted=0
-          AND replace(root_path, char(92), '/') NOT GLOB '*/.zcode/workspace/*'
+          AND replace(root_path, char(92), '/') NOT GLOB '*/.pcbwish/workspace/*'
           GROUP BY root_path ORDER BY max(updated_at) DESC, root_path`,
       )
       .all(context.hostId!) as { root_path: string }[]) {

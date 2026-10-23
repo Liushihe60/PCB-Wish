@@ -1,9 +1,4 @@
-import {
-  BUILTIN_PROVIDER_TEMPLATE_IDS,
-  type AppSettings,
-  type Locale,
-  type ProviderFamilyDomain,
-} from "@zcode/shared";
+import { BUILTIN_PROVIDER_TEMPLATE_IDS, type Locale } from "@zcode/shared";
 import type { ModelSelectionView } from "@zcode/services";
 import { encodeCustomModelValue } from "@/lib/zcodeCustomModelValue.js";
 
@@ -24,26 +19,6 @@ export function resolveLoginApiKeyTemplateId(
 export function resolveLoginApiKeyProviderLabel(choice: ApiKeyProviderChoice): string {
   // Welcome Screen API Key 错误提示需要使用 BigModel 品牌固定写法。
   return choice === "zai" ? "Z.ai" : "BigModel";
-}
-
-export function resolveLoginApiKeyProviderFamilyDomain(
-  choice: ApiKeyProviderChoice,
-): ProviderFamilyDomain {
-  return choice;
-}
-
-export function buildLoginApiKeySkipSettings(
-  choice: ApiKeyProviderChoice,
-  now: number,
-): Pick<
-  AppSettings,
-  "providerFamilyDomain" | "providerFamilyDomainUpdatedAt" | "providerFamilyDomainMigrated"
-> {
-  return {
-    providerFamilyDomain: resolveLoginApiKeyProviderFamilyDomain(choice),
-    providerFamilyDomainUpdatedAt: now,
-    providerFamilyDomainMigrated: true,
-  };
 }
 
 export function shouldShowLoginApiKeyLink(

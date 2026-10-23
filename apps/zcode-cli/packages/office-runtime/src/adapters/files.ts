@@ -189,7 +189,7 @@ export function createDocumentImporter(
   };
   async function parent(create = true) {
     const base = await root();
-    const directory = join(base, ".zcode", "document-imports");
+    const directory = join(base, ".pcbwish", "document-imports");
     if (create) await mkdir(directory, { recursive: true });
     else if (!(await lstat(directory).catch(() => null))) return null;
     if (!inside(base, await realpath(directory)))

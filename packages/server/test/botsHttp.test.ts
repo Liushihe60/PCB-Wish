@@ -53,7 +53,7 @@ describe("bots HTTP callback", () => {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-zcode-bot-secret": "secret",
+        "x-pcbwish-bot-secret": "secret",
       },
       body: JSON.stringify({
         botId: "webhook-1",

@@ -61,7 +61,7 @@ export function buildCleanEnv(
   }
   if (provider === "glm") {
     const glmHome = getDataBaseDir();
-    // Bugfix: GLM agent 会把 config/session 产物写到 dataBaseDir 下的 ~/.zcode/cli。
+    // Bugfix: GLM agent 会把 config/session 产物写到 dataBaseDir 下的 ~/.pcbwish/cli。
     // 这里统一把子进程 HOME 切到 dataBaseDir，保证“写入目录”和“运行时读取目录”始终一致。
     env.HOME = glmHome;
     if (process.platform === "win32") {
@@ -129,7 +129,7 @@ export function findZCodeAgentRuntimeBinary(): string | null {
 
   const candidates = [
     packagedResourcesPath ? resolvePath(packagedResourcesPath, ...resourceSegments) : null,
-    resolvePath(getDataBaseDir(), ".zcode", "server", "agents", ...resourceSegments),
+    resolvePath(getDataBaseDir(), ".pcbwish", "server", "agents", ...resourceSegments),
     ...platformScopedRoots.map((root) =>
       root ? resolvePath(root, runtime.bundledResourceDir, ...entrySegments) : null,
     ),
@@ -157,7 +157,7 @@ export function findZCodeAgentRuntimeNodeBundle(): string | null {
 
   const candidates = [
     packagedResourcesPath ? resolvePath(packagedResourcesPath, ...resourceSegments) : null,
-    resolvePath(getDataBaseDir(), ".zcode", "server", "agents", ...resourceSegments),
+    resolvePath(getDataBaseDir(), ".pcbwish", "server", "agents", ...resourceSegments),
     ...platformScopedRoots.map((root) =>
       root ? resolvePath(root, runtime.bundledResourceDir, ...entrySegments) : null,
     ),

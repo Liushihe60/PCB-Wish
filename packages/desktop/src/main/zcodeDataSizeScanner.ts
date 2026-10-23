@@ -27,7 +27,7 @@ export interface ZCodeDataSizeScanOptions extends ZCodeDataSizeScanRequest {
 }
 
 function createAbortError(): DOMException {
-  return new DOMException("ZCode data size scan aborted", "AbortError");
+  return new DOMException("PCB Wish data size scan aborted", "AbortError");
 }
 
 function isMissingPathError(error: unknown): boolean {

@@ -25,7 +25,7 @@ export function isValidSavedWorkflowNameText(name: string): boolean {
  */
 export function savedWorkflowPathPreview(scope: ZCodeSavedWorkflowScope, name: string): string {
   const file = `${name}.dwf.ts`;
-  return scope === "global" ? `~/.zcode/workflows/${file}` : `.zcode/workflows/${file}`;
+  return scope === "global" ? `~/.pcbwish/workflows/${file}` : `.pcbwish/workflows/${file}`;
 }
 
 export interface WorkflowSaveDraft {

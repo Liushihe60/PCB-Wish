@@ -54,14 +54,14 @@ export async function loadZCodeAgentProfiles(
   await migrateSubagentStateFile(join(input.storageRoot, "v2", "agents-state.json"));
   const roots: Array<{ path: string; source: "user" | "project"; namespace?: string }> = [
     { path: join(input.storageRoot, "agents"), source: "user" as const },
-    { path: join(input.workingDirectory, ".zcode", "agents"), source: "project" as const },
+    { path: join(input.workingDirectory, ".pcbwish", "agents"), source: "project" as const },
   ];
   for (const directory of new Set(
     (input.additionalDirectories ?? []).map((path) => resolve(path)),
   )) {
     if (directory === resolve(input.workingDirectory)) continue;
     roots.push({
-      path: join(directory, ".zcode", "agents"),
+      path: join(directory, ".pcbwish", "agents"),
       source: "project",
       namespace: basename(directory),
     });

@@ -208,7 +208,7 @@ export function HooksSection({
   const hooksService = useMemo<IHooksService>(() => {
     if (!settingsSourceServerId || activeScope !== "user") return targetHooksService;
     // Bug 原因：Source user scope 需要一个远端路径作 RPC 锚点，但该路径不是 project。
-    // 强制 user-only 合同，避免把 Source home 误当 workspace 并覆盖其 .zcode/config.json。
+    // 强制 user-only 合同，避免把 Source home 误当 workspace 并覆盖其 .pcbwish/config.json。
     return {
       loadHooks: (params) => targetHooksService.loadHooks({ ...params, scope: "user" }),
       saveHooks: (params) => targetHooksService.saveHooks({ ...params, scope: "user" }),

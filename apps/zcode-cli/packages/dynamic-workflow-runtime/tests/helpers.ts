@@ -56,7 +56,7 @@ interface RunScriptOptions extends AutoDriverConfig {
 const DEFAULT_CAPS: Caps = { maxConcurrency: 16 };
 
 /**
- * 每个测试文件一份独立的 run cwd。harness 把入口文件写到 `<cwd>/.zcode/workflow-runs/<runId>.mjs`
+ * 每个测试文件一份独立的 run cwd。harness 把入口文件写到 `<cwd>/.pcbwish/workflow-runs/<runId>.mjs`
  * 且**保留**；测试几乎都用 runId "run"，若共用 process.cwd()，并行的测试文件会互相覆写同一个
  * 入口文件（一个子进程跑成另一个文件的脚本），也会把存档留在包目录里。vitest 按文件隔离模块，
  * 这个常量因此是每文件一份；文件内的用例串行，同名覆写无害。

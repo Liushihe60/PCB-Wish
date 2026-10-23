@@ -2,7 +2,7 @@
 """lceda_mcp_launch.py — 嘉立创EDA专业版 MCP stdio 启动器（插件 mcpServers 调用）。
 
 职责：自动定位本机嘉立创EDA专业版客户端（lceda_detect.find_lceda，不写死路径），
-拉起 `<client> --mcp stdio` 并把 stdio 原样转发给宿主（ZCode MCP 框架）。
+拉起 `<client> --mcp stdio` 并把 stdio 原样转发给宿主（PCB Wish MCP 框架）。
 
 纪律：
   - 本进程的 stdout 是 MCP JSON-RPC 信道，任何日志只准写 stderr；

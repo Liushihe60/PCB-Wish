@@ -220,7 +220,7 @@ export function createNodeLoggerFactory(options: NodeLoggerFactoryOptions = {}):
 }
 
 export function getDefaultLogDir(): string {
-  return join(resolveAgentDataHome(), ".zcode", "cli", "log");
+  return join(resolveAgentDataHome(), ".pcbwish", "cli", "log");
 }
 
 function getDefaultMinLevel(env: NodeJS.ProcessEnv | undefined): LogLevel {

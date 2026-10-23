@@ -894,3 +894,19 @@ exceptions:
       - packages/ui/src/components/ui/pcbwish-logo.tsx
       - packages/ui/src/v4/pcbWishSuggestedPrompts.ts
     reason: PCB-Wish fork 的最小领域增件（agent 数据根助手、受理 SOP 上下文段、品牌标记、首页推荐语料）；接管 adapters/core/ui 整包模块边界不在本次范围，沿用既有例外机制逐文件登记。
+  - id: pcb-wish-rebrand-unmanaged-edits
+    rule: unmanaged-new-file
+    paths:
+      - apps/zcode-cli/packages/bootstrap/src/zcode-protocol/saved-workflows-run.ts
+      - apps/zcode-cli/packages/core/src/permission/workflow-draft-path.ts
+      - apps/zcode-cli/packages/core/src/tool/handlers/workflow-drafts.ts
+      - packages/desktop/src/main/windowsCuaOperationIndicatorContent.ts
+      - packages/desktop/src/main/workflowArtifactFile.ts
+      - packages/services/src/feedback/feedbackLogArchive.ts
+      - packages/services/src/file/workspaceFileIgnore.ts
+      - packages/services/src/subagents/subagentRuntimeConfig.ts
+      - packages/shared/src/onboardingRecord.ts
+      - packages/ui/src/components/workflow-timeline/workflowRunSave.ts
+      - packages/ui/src/settings/WorkspaceFileSearchSection.tsx
+      - packages/ui/src/v4/officeSuggestedPrompts.ts
+    reason: PCB-Wish fork 的存量 staging 文件只做品牌、API-Key-only 登录与数据目录改名，未重构所在模块；接管 zcode-cli/desktop/services/shared/ui 整包模块边界不在本次范围，沿用既有例外机制逐文件登记。

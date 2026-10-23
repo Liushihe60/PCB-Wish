@@ -41,7 +41,7 @@ const SAVE_DIAGNOSTICS_MAX_CHARS = 1_000;
 
 /**
  * 脚本比对要扫的文件数上界。一个项目的定义是个位到两位数量级；给个常数只为让异常目录
- * （有人把几千个文件倒进 `.zcode/workflows/`）不至于把一次查询变成一次全盘读。
+ * （有人把几千个文件倒进 `.pcbwish/workflows/`）不至于把一次查询变成一次全盘读。
  */
 const SCRIPT_MATCH_SCAN_LIMIT = 50;
 

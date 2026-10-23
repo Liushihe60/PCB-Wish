@@ -109,7 +109,7 @@ describe("webhook bot provider", () => {
         method: "POST",
         headers: expect.objectContaining({
           "content-type": "application/json",
-          "x-zcode-bot-secret": "secret",
+          "x-pcbwish-bot-secret": "secret",
         }),
       }),
     );

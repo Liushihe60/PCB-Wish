@@ -276,7 +276,7 @@ describe("fileService", () => {
       const dataBaseDir = makeTempDir("zcode-conversation-workspace-");
       setDataBaseDir(dataBaseDir);
       const service = createFileService();
-      const workspacePath = join(dataBaseDir, ".zcode", "workspace", "default");
+      const workspacePath = join(dataBaseDir, ".pcbwish", "workspace", "default");
 
       await expect(service.ensureConversationWorkspace()).resolves.toEqual({
         path: workspacePath,
@@ -297,7 +297,7 @@ describe("fileService", () => {
     it("rejects a file collision without returning a half-created workspace", async () => {
       const dataBaseDir = makeTempDir("zcode-conversation-workspace-file-");
       setDataBaseDir(dataBaseDir);
-      const workspaceRoot = join(dataBaseDir, ".zcode", "workspace");
+      const workspaceRoot = join(dataBaseDir, ".pcbwish", "workspace");
       mkdirSync(workspaceRoot, { recursive: true });
       writeFileSync(join(workspaceRoot, "default"), "not a directory");
 
@@ -310,7 +310,7 @@ describe("fileService", () => {
   // ── createScratchWorkspace ───────────────────────────────────────
 
   describe("createScratchWorkspace", () => {
-    const scratchRoot = join(homedir(), "ZCodeProject");
+    const scratchRoot = join(homedir(), "PCBWishProject");
     const testWorkspaceName = `zcode-file-service-test-${Date.now()}`;
     const testWorkspacePath = join(scratchRoot, testWorkspaceName);
 
@@ -855,9 +855,9 @@ describe("fileService", () => {
       mkdirSync(join(rootPath, "node_modules"));
       writeFileSync(join(rootPath, "node_modules", "package.js"), "");
       writeFileSync(join(rootPath, ".env"), "SECRET=123");
-      // 预置空 .zcodeignore 隔离掉 ignore 规则层：本用例专测"注入 filter 完整替换内置过滤"
-      // 的旧契约；.zcodeignore 剪枝行为由独立用例覆盖。
-      writeFileSync(join(rootPath, ".zcodeignore"), "\n");
+      // 预置空 .pcbwishignore 隔离掉 ignore 规则层：本用例专测"注入 filter 完整替换内置过滤"
+      // 的旧契约；.pcbwishignore 剪枝行为由独立用例覆盖。
+      writeFileSync(join(rootPath, ".pcbwishignore"), "\n");
 
       const service = createFileService({
         workspaceFileSearchFilter: {
@@ -918,8 +918,8 @@ describe("fileService", () => {
       expect(relativePaths).toEqual(["a", "b", "a/x.ts", "b/z.ts", "root.ts"]);
     });
 
-    // .zcodeignore 单一真相源（spec 2026-09-15 增补）：目录排除的唯一规则来源。
-    describe(".zcodeignore", () => {
+    // .pcbwishignore 单一真相源（spec 2026-09-15 增补）：目录排除的唯一规则来源。
+    describe(".pcbwishignore", () => {
       it("prunes gitignored build directories like obj and bin (ZCT-2096811705629528064)", async () => {
         const rootPath = makeTempDir("zcode-file-service-dotnet-");
         writeFileSync(join(rootPath, ".gitignore"), "obj/\nbin/\n");
@@ -940,10 +940,10 @@ describe("fileService", () => {
         // 自动创建暂时停用，内存中的 gitignore + 默认规则仍剪枝 obj/bin。
         expect(entries.map((e) => e.relativePath)).toEqual(["src", ".gitignore", "src/Program.cs"]);
         // 规则文件自身是工具配置，不进入候选。
-        expect(existsSync(join(rootPath, ".zcodeignore"))).toBe(false);
+        expect(existsSync(join(rootPath, ".pcbwishignore"))).toBe(false);
       });
 
-      it("uses .gitignore plus builtin defaults without creating .zcodeignore", async () => {
+      it("uses .gitignore plus builtin defaults without creating .pcbwishignore", async () => {
         const rootPath = makeTempDir("zcode-file-service-create-");
         writeFileSync(join(rootPath, ".gitignore"), "dist/\n");
         mkdirSync(join(rootPath, "node_modules", "pkg"), { recursive: true });
@@ -959,7 +959,7 @@ describe("fileService", () => {
 
         // .gitignore 未声明 node_modules：内存默认段仍剪枝（行为兼容）。
         expect(entries.map((e) => e.relativePath)).toEqual([".gitignore"]);
-        expect(existsSync(join(rootPath, ".zcodeignore"))).toBe(false);
+        expect(existsSync(join(rootPath, ".pcbwishignore"))).toBe(false);
       });
 
       it("dedupes builtin defaults against gitignore rules on creation", async () => {
@@ -980,14 +980,14 @@ describe("fileService", () => {
 
         // 去重：gitignore 区已有 node_modules/ 与 coverage，默认段不再重复写这两条
         // ——文件中每条规则最多一份，删除 gitignore 区那一行即完全放开。
-        const created = readFileSync(join(rootPath, ".zcodeignore"), "utf8");
+        const created = readFileSync(join(rootPath, ".pcbwishignore"), "utf8");
         expect(created.match(/^node_modules\/$/gm)).toHaveLength(1);
         expect(created.match(/^coverage\/?$/gm)).toHaveLength(1);
         // 剪枝仍然生效（gitignore 区那条在起作用）；.gitignore 自身保持可搜。
         expect(entries.map((e) => e.relativePath)).toEqual([".gitignore", "keep.ts"]);
       });
 
-      it("uses builtin defaults without creating .zcodeignore when no .gitignore exists", async () => {
+      it("uses builtin defaults without creating .pcbwishignore when no .gitignore exists", async () => {
         const rootPath = makeTempDir("zcode-file-service-create-no-gitignore-");
         mkdirSync(join(rootPath, "node_modules"));
         writeFileSync(join(rootPath, "node_modules", "x.js"), "");
@@ -1000,7 +1000,7 @@ describe("fileService", () => {
         );
 
         expect(entries.map((e) => e.relativePath)).toEqual(["keep.ts"]);
-        expect(existsSync(join(rootPath, ".zcodeignore"))).toBe(false);
+        expect(existsSync(join(rootPath, ".pcbwishignore"))).toBe(false);
       });
 
       it("honors gitignore semantics: negation, anchored patterns and directory suffix", async () => {
@@ -1009,7 +1009,7 @@ describe("fileService", () => {
         mkdirSync(join(rootPath, "sub", "build"), { recursive: true });
         mkdirSync(join(rootPath, "build"));
         writeFileSync(
-          join(rootPath, ".zcodeignore"),
+          join(rootPath, ".pcbwishignore"),
           ["logs/*", "!logs/keep.log", "/build", "*.tmp"].join("\n"),
         );
         writeFileSync(join(rootPath, "logs", "keep.log"), "");
@@ -1037,12 +1037,12 @@ describe("fileService", () => {
         ]);
       });
 
-      it("lets users re-include builtin defaults by editing .zcodeignore (single source of truth)", async () => {
+      it("lets users re-include builtin defaults by editing .pcbwishignore (single source of truth)", async () => {
         const rootPath = makeTempDir("zcode-file-service-reinclude-");
         mkdirSync(join(rootPath, "node_modules", "pkg"), { recursive: true });
         writeFileSync(join(rootPath, "node_modules", "pkg", "index.js"), "");
         // 用户显式反选内置默认排除：node_modules 必须恢复为可搜（无代码级并集）。
-        writeFileSync(join(rootPath, ".zcodeignore"), "!node_modules/\n");
+        writeFileSync(join(rootPath, ".pcbwishignore"), "!node_modules/\n");
 
         const service = createFileService();
         const entries = unpackWorkspaceFileEntries(
@@ -1066,7 +1066,7 @@ describe("fileService", () => {
         // 尚未落盘：预览初始内容（gitignore 拷贝 + 默认段）。
         expect(initial.source).toBe("template");
         expect(initial.content).toContain("out/");
-        expect(existsSync(join(rootPath, ".zcodeignore"))).toBe(false);
+        expect(existsSync(join(rootPath, ".pcbwishignore"))).toBe(false);
 
         await service.writeWorkspaceFileSearchIgnore({ rootPath, content: "custom/\n" });
         const afterWrite = await service.readWorkspaceFileSearchIgnore({ rootPath });
@@ -1136,7 +1136,7 @@ describe("fileService", () => {
         const rootPath = makeTempDir("zcode-file-service-section-fallback-");
         writeFileSync(join(rootPath, ".gitignore"), "out/\n");
         // 用户删掉了分区标记（旧格式/手动清理），无法结构化定位分区。
-        writeFileSync(join(rootPath, ".zcodeignore"), "legacy-rules/\n");
+        writeFileSync(join(rootPath, ".pcbwishignore"), "legacy-rules/\n");
 
         const service = createFileService();
         const synced = await service.applyWorkspaceFileSearchIgnoreTransform({

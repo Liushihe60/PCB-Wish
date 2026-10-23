@@ -18,7 +18,7 @@ describe("custom OpenAI Provider E2E seed", () => {
 
   it("只写版本化 Personal Config，不再制造旧 Provider 事实来源", async () => {
     const homeDir = await mkdtemp(join(tmpdir(), "zcode-provider-seed-"));
-    const cliConfigFile = join(homeDir, ".zcode", "cli", "config.json");
+    const cliConfigFile = join(homeDir, ".pcbwish", "cli", "config.json");
     await writeFileWithParents(
       cliConfigFile,
       JSON.stringify({ mcp: { example: { command: "example" } } }),
@@ -36,7 +36,7 @@ describe("custom OpenAI Provider E2E seed", () => {
     });
 
     const personalConfig = JSON.parse(
-      await readFile(join(homeDir, ".zcode", "v2", "provider_config.json"), "utf-8"),
+      await readFile(join(homeDir, ".pcbwish", "v2", "provider_config.json"), "utf-8"),
     ) as { config: { modelConfigRules: unknown } };
     const personal = decodeProviderConfigFile(personalConfig);
     const resolved = new ProviderConfigResolver().resolve({
@@ -91,7 +91,7 @@ describe("custom OpenAI Provider E2E seed", () => {
       }),
     );
 
-    await expect(stat(join(homeDir, ".zcode", "v2", "model-providers.json"))).rejects.toMatchObject(
+    await expect(stat(join(homeDir, ".pcbwish", "v2", "model-providers.json"))).rejects.toMatchObject(
       { code: "ENOENT" },
     );
     expect(JSON.parse(await readFile(cliConfigFile, "utf-8"))).toEqual({
@@ -121,7 +121,7 @@ describe("custom OpenAI Provider E2E seed", () => {
     const homeDir = await mkdtemp(join(tmpdir(), "zcode-provider-key-read-"));
     vi.stubEnv("ZCODE_E2E_HOME_DIR", homeDir);
     await writeFileWithParents(
-      join(homeDir, ".zcode", "v2", "provider_config.json"),
+      join(homeDir, ".pcbwish", "v2", "provider_config.json"),
       JSON.stringify({
         schemaVersion: 1,
         config: {
@@ -153,7 +153,7 @@ describe("custom OpenAI Provider E2E seed", () => {
   it("E2E 诊断不再读取旧 Provider Store", async () => {
     const homeDir = await mkdtemp(join(tmpdir(), "zcode-provider-read-"));
     await writeFileWithParents(
-      join(homeDir, ".zcode", "v2", "model-providers.json"),
+      join(homeDir, ".pcbwish", "v2", "model-providers.json"),
       JSON.stringify([
         {
           id: "legacy-provider",

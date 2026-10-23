@@ -358,7 +358,7 @@ export class ConversationShareHttpClient {
     });
     throw new ConversationShareClientError({
       kind: "unsupported_schema_version",
-      message: "Conversation share payload requires a newer ZCode version",
+      message: "Conversation share payload requires a newer PCB Wish version",
     });
   }
 

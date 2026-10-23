@@ -104,7 +104,7 @@ vi.mock("@zcode/shared", () => ({
   },
   getDesktopMenuMessage: (_locale: string, id: string) => {
     const enLabels: Record<string, string> = {
-      "titleBar.menu.help.zcodeEndpoint": "ZCode Endpoint",
+      "titleBar.menu.help.zcodeEndpoint": "PCB Wish Endpoint",
       "titleBar.menu.help.zcodeEndpoint.production": "Production (default)",
       "titleBar.menu.help.zcodeEndpoint.test": "Test",
       "titleBar.menu.help.zcodeEndpoint.custom": "Custom...",
@@ -198,7 +198,7 @@ describe("desktopApplicationMenu endpoint submenu", () => {
 
     const template = buildFromTemplateMock.mock
       .calls[0]?.[0] as Electron.MenuItemConstructorOptions[];
-    const endpointItem = findMenuItem(template, "ZCode Endpoint");
+    const endpointItem = findMenuItem(template, "PCB Wish Endpoint");
     const testItem = findMenuItem(template, undefined, HELP_ZCODE_ENDPOINT_TEST_MENU_ID);
     expect(endpointItem).toBeTruthy();
     expect(testItem?.checked).toBe(true);
@@ -216,7 +216,7 @@ describe("desktopApplicationMenu endpoint submenu", () => {
 
     const template = buildFromTemplateMock.mock
       .calls[0]?.[0] as Electron.MenuItemConstructorOptions[];
-    expect(findMenuItem(template, "ZCode Endpoint")).toBeUndefined();
+    expect(findMenuItem(template, "PCB Wish Endpoint")).toBeUndefined();
   });
 
   it("Preview 隐藏更新入口，生产版继续显示", async () => {
@@ -301,7 +301,7 @@ describe("desktopApplicationMenu endpoint submenu", () => {
     expect(findMenuItem(template, "粘贴")?.role).toBe("paste");
     expect(findMenuItem(template, "最小化")?.role).toBe("minimize");
     if (process.platform === "darwin") {
-      expect(findMenuItem(template, "隐藏 ZCode")?.role).toBe("hide");
+      expect(findMenuItem(template, "隐藏 PCB Wish")?.role).toBe("hide");
     }
   });
 

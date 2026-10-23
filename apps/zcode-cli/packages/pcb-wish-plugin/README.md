@@ -39,7 +39,7 @@
 
 2026-10-19 实测：`lceda_mcp_launch.py` → `lceda-pro --mcp stdio`（客户端 4.1.78）MCP initialize 握手成功（serverInfo: JLCEDA Pro 4.1.78.34f5b8d9）。**注意**：低于 4.1.60 的版本（如 3.2.149）对 `--mcp stdio` 是空操作（进程立即退出、无响应），doctor 会拦截。
 
-## 安装（ZCode 桌面端）
+## 安装（PCB Wish 桌面端）
 
 1. 打开 **插件市场 / Plugin Marketplace**。
 2. **添加 / Add → 添加插件市场 / Add Plugin Marketplace**，粘贴目录：

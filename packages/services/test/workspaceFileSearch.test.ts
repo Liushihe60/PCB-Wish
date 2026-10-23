@@ -19,7 +19,7 @@ const roots: string[] = [];
 async function workspace() {
   const rootPath = await mkdtemp(join(tmpdir(), "mention-host-search-"));
   roots.push(rootPath);
-  await writeFile(join(rootPath, ".zcodeignore"), "node_modules/\n");
+  await writeFile(join(rootPath, ".pcbwishignore"), "node_modules/\n");
   await mkdir(join(rootPath, "src"));
   await Promise.all(
     ["Main.ts", "main.test.ts", "README.md", "中文.txt"].map((name) =>

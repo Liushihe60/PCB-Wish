@@ -1,5 +1,5 @@
 // Sync the built dev plugin into the CLI's plugin cache so the running zcode CLI
-// (which loads plugins from ~/.zcode/cli/plugins/cache/..., NOT from this repo)
+// (which loads plugins from ~/.pcbwish/cli/plugins/cache/..., NOT from this repo)
 // picks up skill / MCP / manifest changes without a manual copy.
 //
 // This closes the last hop of the sync chain:
@@ -45,7 +45,7 @@ async function resolveCacheDir() {
   if (process.argv[2]) return resolve(process.argv[2]);
   const marketplace = join(
     homedir(),
-    ".zcode/cli/plugins/marketplaces/zcode-plugins-official/marketplace.json",
+    ".pcbwish/cli/plugins/marketplaces/zcode-plugins-official/marketplace.json",
   );
   try {
     const text = await readFile(marketplace, "utf8");
@@ -57,7 +57,7 @@ async function resolveCacheDir() {
   } catch {
     // marketplace.json missing/unreadable — fall through to glob.
   }
-  const cacheRoot = join(homedir(), ".zcode/cli/plugins/cache/zcode-plugins-official/computer-use");
+  const cacheRoot = join(homedir(), ".pcbwish/cli/plugins/cache/zcode-plugins-official/computer-use");
   if (existsSync(cacheRoot)) {
     const dirs = await readdir(cacheRoot);
     if (dirs.length === 1) return join(cacheRoot, dirs[0]);
@@ -91,7 +91,7 @@ for (const entry of ENTRIES) {
   copied.push(entry);
 }
 
-// Bug 根因：开发态 CLI 实际从 ~/.zcode/cli/plugins/cache 启动 MCP，
+// Bug 根因：开发态 CLI 实际从 ~/.pcbwish/cli/plugins/cache 启动 MCP，
 // 只同步 dist 会让 externalized sharp 仍从一个隔离目录解析，导致 screenshot/zoom
 // 在源码和 Helper 都正确时依旧报 MODULE_NOT_FOUND。与产品打包共用同一个 staging
 // 函数，把当前平台的 JS/native 运行时放在插件自身 node_modules，避免两条链路漂移。

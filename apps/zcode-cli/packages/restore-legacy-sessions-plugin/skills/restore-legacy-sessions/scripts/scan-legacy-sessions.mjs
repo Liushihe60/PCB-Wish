@@ -12,9 +12,9 @@ process.emitWarning = function filterSqliteExperimentalWarning(warning, ...args)
 const { DatabaseSync } = await import("node:sqlite");
 process.emitWarning = originalEmitWarning;
 
-const defaultLegacyDir = join(homedir(), ".zcode", "v2", "sessions");
-const defaultTaskIndexPath = join(homedir(), ".zcode", "v2", "tasks-index.sqlite");
-const defaultCliDbPath = join(homedir(), ".zcode", "cli", "db", "db.sqlite");
+const defaultLegacyDir = join(homedir(), ".pcbwish", "v2", "sessions");
+const defaultTaskIndexPath = join(homedir(), ".pcbwish", "v2", "tasks-index.sqlite");
+const defaultCliDbPath = join(homedir(), ".pcbwish", "cli", "db", "db.sqlite");
 
 function printUsage() {
   console.log(`Usage:

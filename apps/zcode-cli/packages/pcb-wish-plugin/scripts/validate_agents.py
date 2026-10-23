@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """validate_agents.py — 插件 agent 定义离线校验器。
 
-按 ZCode 运行时解析器（subagent-profile-parser.ts）的关键规则离线自检，
+按 PCB Wish 运行时解析器（subagent-profile-parser.ts）的关键规则离线自检，
 在把插件装进客户端之前抓掉「枚举能看到、运行时 ENOENT」的坑。
 
 校验规则（与源码一致，源码位置见校验报告）：

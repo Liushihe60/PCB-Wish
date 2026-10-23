@@ -238,7 +238,7 @@ export class ConversationSharePreviewClient {
       });
       throw new ConversationSharePreviewClientError({
         kind: "unsupported_schema_version",
-        message: "Conversation share requires a newer ZCode version",
+        message: "Conversation share requires a newer PCB Wish version",
         status: response.status,
         requestId,
       });

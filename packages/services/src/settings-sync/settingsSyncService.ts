@@ -413,35 +413,35 @@ function resolveUserHomeDir(): string {
 }
 
 function getWorkspaceZcodeSkillRoot(workspacePath: string): string {
-  return join(workspacePath, ".zcode", "skills");
+  return join(workspacePath, ".pcbwish", "skills");
 }
 
 function getUserZcodeSkillRoot(): string {
-  return join(getDataBaseDir(), ".zcode", "skills");
+  return join(getDataBaseDir(), ".pcbwish", "skills");
 }
 
 function getWorkspaceZcodeCommandRoot(workspacePath: string): string {
-  return join(workspacePath, ".zcode", "commands");
+  return join(workspacePath, ".pcbwish", "commands");
 }
 
 function getUserZcodeCommandRoot(): string {
-  return join(getDataBaseDir(), ".zcode", "commands");
+  return join(getDataBaseDir(), ".pcbwish", "commands");
 }
 
 function getWorkspaceZcodePluginRoot(workspacePath: string): string {
-  return join(workspacePath, ".zcode", "plugins");
+  return join(workspacePath, ".pcbwish", "plugins");
 }
 
 function getUserZcodePluginRoot(): string {
-  return join(getDataBaseDir(), ".zcode", "plugins");
+  return join(getDataBaseDir(), ".pcbwish", "plugins");
 }
 
 function getUserZcodeCliConfigPath(): string {
-  return join(getDataBaseDir(), ".zcode", "cli", "config.json");
+  return join(getDataBaseDir(), ".pcbwish", "cli", "config.json");
 }
 
 function getWorkspaceZcodeConfigPath(workspacePath: string): string {
-  return join(workspacePath, ".zcode", "config.json");
+  return join(workspacePath, ".pcbwish", "config.json");
 }
 
 function getClaudeUserAgentsFileSourcePath(): string {
@@ -449,7 +449,7 @@ function getClaudeUserAgentsFileSourcePath(): string {
 }
 
 function getUserZcodeAgentsFilePath(): string {
-  return join(getDataBaseDir(), ".zcode", "AGENTS.md");
+  return join(getDataBaseDir(), ".pcbwish", "AGENTS.md");
 }
 
 function resolveTargetRootForScope(

@@ -235,7 +235,7 @@ async function findDefaultUserInstructionFile(
   }
 
   const dataHome = env.ZCODE_DATA_BASE_DIR?.trim() || resolveUserHomeDir(env);
-  const filePath = join(dataHome, ".zcode", "AGENTS.md");
+  const filePath = join(dataHome, ".pcbwish", "AGENTS.md");
   if (await isFile(filePath)) {
     return { filePath, fileName: "AGENTS.md" };
   }
