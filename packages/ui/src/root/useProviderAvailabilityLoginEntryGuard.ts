@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { UserInfo } from "@zcode/shared";
 import type { ModelSelectionView } from "@zcode/services";
 import { resolveProviderAvailabilityState } from "@/lib/modelProviderAvailability.js";
+import { isLoginGateSkipped, setLoginGateSkipped } from "@/login/LoginApiKeyForm.helpers.js";
 import { logger } from "@/logger.js";
 
 export interface ProviderAvailabilityLoginEntryGuardResult {
@@ -54,8 +55,12 @@ export function useProviderAvailabilityLoginEntryGuard({
         : modelSelectionView;
       const availability = resolveProviderAvailabilityState({ modelSelectionView: refreshedView });
       const { hasUsableProvider, providerCount } = availability;
-      // PCB Wish 仅支持 API Key：只要尚未配置任何可用模型服务，就引导配置 Key。
-      const shouldOpenLoginEntry = !hasUsableProvider;
+      // PCB Wish 仅支持 API Key：首次启动引导配置；用户主动跳过后不再每次启动强制弹出。
+      // 一旦配置出可用模型服务就清除跳过标记，避免以后删光 Provider 时登录页再也不出现。
+      if (hasUsableProvider) {
+        setLoginGateSkipped(false);
+      }
+      const shouldOpenLoginEntry = !hasUsableProvider && !isLoginGateSkipped();
 
       // 未登录且没有可用模型配置时必须引导用户连接账号或填写 API Key。
       // 启动检查、API Key 设置回流等入口统一走这里，避免各处复制判断后语义分叉。

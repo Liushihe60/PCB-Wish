@@ -12,7 +12,7 @@ interface WelcomeScreenProps {
   onComplete: (reason: LoginCompleteReason) => void | Promise<void>;
 }
 
-export type LoginCompleteReason = "apiKey";
+export type LoginCompleteReason = "apiKey" | "skipped";
 
 export function WelcomeScreen({ onComplete }: WelcomeScreenProps) {
   return (
@@ -22,7 +22,12 @@ export function WelcomeScreen({ onComplete }: WelcomeScreenProps) {
       <div className="pointer-events-none absolute left-0 top-0 right-0 z-10 flex h-12 items-center [app-region:drag] platform-windows-desktop:right-[134px] platform-linux-desktop:right-[134px]" />
       <DesktopOverlayWindowControls />
       <section className="relative z-10 w-full flex flex-col gap-10 max-w-sm rounded-2xl border border-popover-border bg-background p-8 text-ui-base/relaxed shadow-md sm:p-10">
-        <LoginPanel onComplete={onComplete} />
+        <LoginPanel
+          onComplete={onComplete}
+          onSkip={() => {
+            return onComplete("skipped");
+          }}
+        />
       </section>
     </main>
   );
@@ -30,9 +35,10 @@ export function WelcomeScreen({ onComplete }: WelcomeScreenProps) {
 
 interface LoginPanelProps {
   onComplete: (reason: LoginCompleteReason) => void | Promise<void>;
+  onSkip?: () => void | Promise<void>;
 }
 
-export function LoginPanel({ onComplete }: LoginPanelProps) {
+export function LoginPanel({ onComplete, onSkip }: LoginPanelProps) {
   const { intl } = useZCodeIntl();
 
   return (
@@ -47,6 +53,7 @@ export function LoginPanel({ onComplete }: LoginPanelProps) {
           onSaved={() => {
             return onComplete("apiKey");
           }}
+          onSkip={onSkip}
         />
       </div>
     </>
