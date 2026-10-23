@@ -19,6 +19,14 @@ PCB-Wish is a desktop agent system for PCB design. Users describe a hardware goa
 
 The project is built on the ZCode desktop application. The domain plugin lives in `apps/zcode-cli/packages/pcb-wish-plugin/`, and design execution relies on LCEDA Pro (JLCEDA Professional Edition).
 
+## Background
+
+PCB-Wish grew out of a full engineering-innovation course workflow. Students are expected to start from requirements and deliver a working board, but the process involves extensive lookup, component selection, item-by-item comparison, and repetitive drawing. Beginners can spend most of their time on mechanical steps instead of numerical design calculations, component trade-offs, and verification evidence.
+
+The project lets the agent absorb that repetitive work so students can focus on requirement judgment, design decisions, and acceptance. A student describes the target board in natural language; the system structures the requirements, completes selection and design, checks each gate, and produces a teaching lecture when explicitly requested. The lecture explains operating principles, design rationale, layout and routing notes, and verification results by module, and can support course teaching, lab guidance, or project presentations.
+
+Typical scenarios include course projects, undergraduate innovation projects, lab onboarding, and small-batch prototyping. Teachers provide the task book and course requirements; students define needs and accept results; the system executes the workflow and organizes materials; engineering judgment and final sign-off remain human. The project aims to ground "AI + teaching and learning" in an inspectable, traceable engineering chain rather than a generated paragraph or image.
+
 ## Core capabilities
 
 - **Conversational intake.** Describe the board in everyday language; the system lists design-critical gaps, asks at most two rounds of questions, and produces a machine-checkable `MISSION.md`.
@@ -107,12 +115,6 @@ The current lecture has one overview chapter plus seven functional-module chapte
 - Routing is primarily autorouted with scripted repair; aesthetics, cost, EMC, and thermal design still require engineering judgment.
 - Ordering, payment, external communication, and final sign-off remain the user's responsibility. Before fabrication, review footprints, polarity, and the BOM, and complete the JLC DFM check.
 - Due to budget constraints, one full human-in-the-loop test (FlexiHeal v2) has been completed; a fully unattended run remains unverified. The lecture currently demonstrates only the default skill package; combinations with other open-source skill packages have not been shown.
-
-## Origin
-
-The project grew out of a full engineering-innovation course workflow. The aim is for students with some electronics background to use LLM tools to build a board of their own interest end to end, learning numerical design calculations and component selection along the way. The workflow mirrors a complete board-fabrication process, and the lecture supports the engineering practice.
-
-Current general-purpose models and limited domain guidance leave room for improvement. Future work will combine stronger general models, electronics-specialized models, and feedback from engineers.
 
 ## Repository layout
 
