@@ -1,222 +1,133 @@
-# ZCode
+# PCB-Wish
 
-<div align="center">
-  <img src="public/logo/icons/1024x1024.png" alt="ZCode" width="128" height="128" />
-</div>
 <p align="center">
-  <a href="https://applink.feishu.cn/client/chat/chatter/add_by_link?link_token=47ag983c-8fcb-4d6d-814b-5395193a712c&amp;qr_code=true">Feishu community</a> ·
-  <a href="https://discord.gg/z9aBcQXZQ3">Discord</a>
-</p>
-<p align="center">
-  <a href="README.md">简体中文</a> | English
+  <a href="docs/readme/images/app-home.png">
+    <img src="docs/readme/images/app-home.png" alt="PCB-Wish home screen" width="860">
+  </a>
 </p>
 
-ZCode is an AI coding workspace with desktop, browser, and terminal interfaces. This repository contains the clients, backend services, shared UI, and Agent CLI and runtime source code.
+<p align="center">
+  <strong>An agent workbench from natural-language requirements to a manufacturable PCB</strong><br>
+  Windows 10/11 · v3.16.2 · Local execution · Bring your own API key
+</p>
 
-## Updates
+<p align="center">
+  <a href="README.md">简体中文</a> | English · <a href="README.pdf">Full report (Chinese)</a> · <a href="README.tex">LaTeX source</a>
+</p>
 
-- **2026-10-19**: Updated to ZCode v3.16.2.
-- **2026-10-16**: Updated to ZCode v3.16.1.
-- 2026-10-10: Updated to ZCode v3.15.1.
-- 2026-9-23: Updated to ZCode v3.14.3.
+PCB-Wish is a desktop agent system for PCB design. Users describe a hardware goal in natural language; the system handles requirement clarification, component selection, schematic capture, PCB layout and routing, verification, and finally exports Gerber, drill, BOM, pick-and-place, and inspection reports. If the user explicitly requests a teaching lecture, the system also produces a LaTeX-typeset PDF lecture after the fabrication files are complete.
 
-## Setup
+The project is built on the ZCode desktop application. The domain plugin lives in `apps/zcode-cli/packages/pcb-wish-plugin/`, and design execution relies on LCEDA Pro (JLCEDA Professional Edition).
 
-Install Git, Node.js **24.14.0**, and pnpm **10.33.2**. [mise.toml](mise.toml) is the source of truth for tool versions. Run all development and packaging commands below from the repository root.
+## Core capabilities
+
+- **Conversational intake.** Describe the board in everyday language; the system lists design-critical gaps, asks at most two rounds of questions, and produces a machine-checkable `MISSION.md`.
+- **Staged gates.** Work advances through G0–G7. Every gate requires evidence files; a failed gate means revision or a pause, never proceeding with a known gap.
+- **Independent verification.** A separate read-only agent re-reads the canvas, runs netlist checks, and parses Gerber files instead of trusting the design agent's claims.
+- **EDA execution.** Drives LCEDA Pro to build footprints, draw schematics, place and route, pour copper, add silkscreen, and export fabrication files.
+- **Manufacturing deliverables.** Gerber, drill, BOM, pick-and-place, assembly notes, and inspection reports, written to `projects/<slug>/export/`.
+- **Teaching lecture.** Generated only on explicit request: an overview plus module chapters covering operating principles, design rationale, layout and routing, and verification results.
+- **Traceability.** Decision logs, gate states, and verification records are written to `logs/` and `reports/`, providing the source of truth for design, review, and lecturing.
+
+## Workflow
+
+```text
+Requirements
+  │
+  ▼
+Intake + sourcing (G0 / G0.5)
+  │
+  ▼
+Design (G1–G5.5)
+  │
+  ▼
+Independent verification (G6)
+  │
+  ▼
+Delivery: Gerber, drill, BOM, pick-and-place, inspection report
+  └── Teaching lecture (G7, explicit user request)
+```
+
+`MISSION.md` is the single source of truth; gate states are recorded in `projects/<slug>/reports/gates.json`, and each gate has its own evidence files and inspection records.
+
+<p align="center">
+  <a href="docs/readme/images/app-conversation.png">
+    <img src="docs/readme/images/app-conversation.png" alt="PCB-Wish conversation UI" width="780">
+  </a>
+</p>
+
+<p align="center"><sub>Task list on the left; natural-language input, agent replies, and model selection on the right.</sub></p>
+
+## Quick start
+
+1. Windows 10/11 64-bit, LCEDA Pro (>= 4.1.60), and Python 3.10+.
+2. Install `PCB-Wish-3.16.2-win-x64.exe`, or run the portable `PCB-Wish.exe`.
+3. On first launch, enter an API key. The endpoint must be OpenAI-compatible; the model must support tool calling. A 1M context is recommended. Configuration stays on the local machine.
+4. Select a workspace and describe the board in natural language; the system asks focused questions to close design gaps.
+5. The design advances through G0–G7. Deliverables are written to `projects/<slug>/export/`, with the delivery note at `reports/DELIVERY_FINAL.md`.
+
+Run the desktop app from source:
 
 ```bash
 pnpm bootstrap
-```
-
-`pnpm bootstrap` installs workspace dependencies, prepares local desktop runtime assets, and runs `build:bootstrap`.
-
-The Agent CLI and runtime source code lives in [apps/zcode-cli/](apps/zcode-cli/) as a regular directory included when you clone this repository. No separate checkout or Git submodule initialization is required.
-
-Additional setup and build commands:
-
-| Command                        | Purpose                                                                                                                             |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm install`                 | Install dependencies                                                                                                                |
-| `pnpm prepare:desktop-runtime` | Prepare desktop runtime assets, including remote assets by default                                                                  |
-| `pnpm prepare:remote-assets`   | Prepare remote runtime assets separately                                                                                            |
-| `pnpm bootstrap:with-remote`   | Set up dependencies and local and remote assets, then build the relevant packages sequentially; skip the desktop application bundle |
-| `pnpm build`                   | Recursively run each workspace package's build script, including its asset preparation steps                                        |
-
-The default `bootstrap` skips remote asset preparation and is suitable for local desktop development. Run the corresponding preparation command when working with remote workspaces or validating remote distribution assets.
-
-## Development and Usage
-
-### Desktop
-
-```bash
 pnpm dev:desktop
-
-# Use the test environment
-pnpm dev:desktop:test
 ```
 
-`pnpm dev:desktop` defaults to `pnpm dev:desktop:prod` and uses production service configuration. The startup script prepares local runtime assets, builds the desktop Agent, then starts Electron and source watchers.
+## Test case: FlexiHeal v2
 
-Set `ZCODE_DATA_BASE_DIR` to use a separate development data directory. For example, on macOS / Linux:
+FlexiHeal v2 is the only complete test so far that ran from requirements to fabrication files and then to a teaching lecture. The task was a flexible bend-sensor angle measurement board: convert the sensor's 53–90 Ω resistance change into 0–3.3 V for an ADC, support USB/lithium battery power and charging, an OLED interface, 0°/90° calibration buttons, and a debug port, with hand soldering by the client.
 
-```bash
-ZCODE_DATA_BASE_DIR="$HOME/.zcode-dev-home" pnpm dev:desktop:test
-```
+<p align="center">
+  <a href="docs/readme/images/board-pour.png">
+    <img src="docs/readme/images/board-pour.png" alt="FlexiHeal v2 top copper pour" width="780">
+  </a>
+</p>
 
-### Web Development
+<p align="center"><sub>FlexiHeal v2 after top copper pour (red: top copper; blue: bottom copper; yellow: silkscreen and pads).</sub></p>
 
-Use development mode when editing Web or backend source code:
+The case produced Gerber, drill, BOM, pick-and-place, assembly notes, inspection reports, and a 58-page lecture; the fabrication files were independently reviewed along two paths. The test used only the project's task book as the requirement input; it does not mean the result has been delivered or put into service.
 
-```bash
-pnpm dev:web
+## Teaching lecture
 
-# Set the backend workspace (macOS / Linux)
-ZCODE_SERVER_WORKSPACE=/path/to/project pnpm dev:web
-```
+The teaching lecture is not a default deliverable. It enters the `MISSION.md` deliverable list only when the user explicitly asks for it during intake. Without an explicit request, the intake agent may ask whether one is needed; if it is not confirmed or selected, no lecture is generated and the delivery note records that. Once requested, the system generates the PDF after the board passes G6.
 
-This starts both the Web development server (default: `http://localhost:5173`) and the backend (default: `http://localhost:3030`). Open the Web development server in your browser. `/ws` and general `/api` requests are proxied to the local backend; `/api/v1/oauth/token` is proxied separately to the configured product service.
+The current lecture has one overview chapter plus seven functional-module chapters. Each chapter covers key points, operating principles, design rationale and calculations, PCB layout and routing notes, and verification methods and results. The FlexiHeal v2 lecture is 58 pages with 27 real engineering figures, with key numbers tied to measured, calculated, or simulated records wherever possible.
 
-After changing Agent source code, run `pnpm --filter @zcode/cli... build` and restart the service. To validate the complete distribution, extract and run it as described under Packaging → ZCode CLI distribution below.
+<p align="center">
+  <a href="docs/readme/images/lecture-sample.png">
+    <img src="docs/readme/images/lecture-sample.png" alt="FlexiHeal v2 lecture sample page" width="620">
+  </a>
+</p>
 
-### ZCode CLI distribution
+<p align="center"><sub>A sample lecture page: PCB layout notes with an engineering example figure.</sub></p>
 
-The command-line distribution includes the TUI, Web client, and Agent behind one `zcode` command. With no arguments it starts the TUI; a leading `--web` starts Web mode; all other arguments go to the existing Agent CLI. Both modes run locally without Electron.
+## Scope and current limits
 
-```bash
-# Start the terminal UI by default
-zcode
+- Scope: 2–4 layer, low-speed digital and analog boards of small-to-medium density. RF, high-speed, and blind/buried-via requests are steered toward simplification or phasing.
+- Routing is primarily autorouted with scripted repair; aesthetics, cost, EMC, and thermal design still require engineering judgment.
+- Ordering, payment, external communication, and final sign-off remain the user's responsibility. Before fabrication, review footprints, polarity, and the BOM, and complete the JLC DFM check.
+- Due to budget constraints, one full human-in-the-loop test (FlexiHeal v2) has been completed; a fully unattended run remains unverified. The lecture currently demonstrates only the default skill package; combinations with other open-source skill packages have not been shown.
 
-# Start the Web interface
-zcode --web
+## Origin
 
-# Set the project and port without opening a browser automatically
-zcode --web --workspace /path/to/project --port 3030 --no-open
+The project grew out of a full engineering-innovation course workflow. The aim is for students with some electronics background to use LLM tools to build a board of their own interest end to end, learning numerical design calculations and component selection along the way. The workflow mirrors a complete board-fabrication process, and the lecture supports the engineering practice.
 
-# Show CLI or Web options
-zcode --help
-zcode --web --help
-```
+Current general-purpose models and limited domain guidance leave room for improvement. Future work will combine stronger general models, electronics-specialized models, and feedback from engineers.
 
-In Web mode, it uses the current directory as the workspace, listens on `127.0.0.1` without token authentication by default, selects an available port, and opens a browser. Use the URL printed in the terminal and press `Ctrl+C` to stop the service. For LAN access, use `--host 0.0.0.0`; listening on a non-local address generates an access token by default. Use the token-bearing URL printed in the terminal. Set a token with `--token`, or disable token authentication with `--no-token`.
+## Repository layout
 
-When starting the general Web service's HTTP entry directly, configure API/WebSocket authentication with `ZCODE_SERVER_AUTH_TOKEN`. When creating the service programmatically, use the `authToken` option.
+- `apps/zcode-cli/packages/pcb-wish-plugin/`: the PCB-Wish domain plugin, including agents, skills, gates, and EDA scripts.
+- `apps/`: desktop and command-line applications.
+- `packages/`: shared runtime and infrastructure.
+- `docs/readme/`: report images and build outputs.
 
-See Packaging below for build instructions. `pnpm build:zcode` only creates the distribution; it does not replace an existing `zcode` on `PATH`. If the command still points to an older installation or another checkout, check it with `command -v zcode` on macOS / Linux or `where.exe zcode` on Windows.
+## Documentation
 
-### CLI Source Development
+- [README.pdf](README.pdf): full report (Chinese)
+- [README.tex](README.tex): LaTeX source
+- [Plugin technical notes](apps/zcode-cli/packages/pcb-wish-plugin/README.md)
+- [docs/readme/images](docs/readme/images): UI, PCB, and lecture images
 
-See the [CLI usage guide (Chinese)](apps/zcode-cli/docs/usage/README.md) for model configuration, non-interactive runs, tools and extensions, batch evaluation, and trajectory capture.
+## License and acknowledgements
 
-Use the source entry when developing the TUI or Agent:
-
-```bash
-pnpm --filter @zcode/cli dev --help
-pnpm --filter @zcode/cli dev
-
-# Build the CLI and its workspace dependencies
-pnpm --filter @zcode/cli... build
-node apps/zcode-cli/packages/cli/dist/zcode.cjs --help
-```
-
-This entry runs the Agent CLI directly and does not handle the distribution's `--web` switch. Use `pnpm dev:web` for Web development, or the extracted `bin/zcode.mjs` shown below to test the unified command.
-
-### UI Plugin development
-
-See the [UI Plugin guide](UI_PLUGIN.en.md) for the Excalidraw workflow, supported APIs, plugin installation and updates, and host debugging.
-
-**Plugin PRs in `zcode-plugins` must declare whether they affect a UI Plugin and list the plugin names in the PR template.** See the [required plugin-type declaration](UI_PLUGIN.en.md#declare-the-plugin-type-in-pull-requests).
-
-## Configuration
-
-The root [.env.example](.env.example) provides sample service URLs and build configuration. Copy it to `.env` as needed and place local overrides in `.env.local`. Select the Desktop development environment with `dev:desktop:test` or `dev:desktop:prod`.
-
-| Setting                              | Purpose                                                                                 |
-| ------------------------------------ | --------------------------------------------------------------------------------------- |
-| `ZCODE_DATA_BASE_DIR`                | Base directory for application data, stored under its `.zcode/` subdirectory            |
-| `ZCODE_SERVER_WORKSPACE`             | Workspace path for the Web backend                                                      |
-| `ZCODE_BUILTIN_PROVIDER_CONFIG_FILE` | Path to a local provider configuration file; uses the built-in configuration when unset |
-| `ZCODE_DIST_BASE_URL`                | Download base URL used by the CLI distribution installer                                |
-
-Runtime variables can be set explicitly in the environment of the startup command. See [config/README.md](config/README.md) for the default configuration shipped with the client.
-
-## Packaging
-
-See [third-party/README.md](third-party/README.md) for notice generation, distribution checks, and where the notices are included in each distribution.
-
-### Desktop
-
-```bash
-pnpm bundle:desktop
-
-# Set the target platform and CPU architecture
-pnpm bundle:desktop -- --os win --arch x64
-
-pnpm bundle:desktop -- --help
-```
-
-The default target is macOS arm64, and the default output directory is `packages/desktop/dist/`. `--os` accepts `mac`, `win`, or `linux`; `--arch` accepts `x64` or `arm64`. Packaging and signing require the tools and configuration for the target platform.
-
-### ZCode CLI distribution
-
-Run `pnpm build:zcode` to build the CLI/TUI, backend, and Web client, collect the TUI native libraries, workers, and runtime dependencies, then assemble the distribution. Running the distribution still requires Node.js; use the version specified in `mise.toml`.
-
-Before packaging, set the download base URL with `ZCODE_DIST_BASE_URL` in `.env`, `.env.local`, or the process environment, or pass it through `--base-url`. The URL below is a placeholder; replace it with your hosting URL when publishing:
-
-```bash
-pnpm build:zcode --base-url https://downloads.example.com/zcode/
-
-# When ZCODE_DIST_BASE_URL is already configured
-pnpm build:zcode
-
-# Repackage existing Agent, backend, and Web build outputs
-pnpm build:zcode --skip-build
-
-# Show options for the version, output directory, and more
-pnpm build:zcode --help
-```
-
-The version defaults to the root `package.json` version. Output is written to `dist/zcode/`:
-
-- `releases/<version>/zcode-<version>.tar.gz`: runtime package.
-- `releases/<version>/sha256.txt`: checksum file.
-- `latest.json` and `install.sh`: version index and installer.
-
-Upload the entire directory to the configured download base URL. The installer downloads the runtime package from that URL, installs it to `~/.zcode/runtime` by default, and creates the `zcode` command in `~/.local/bin`. Override these directories with `ZCODE_DIST_HOME` and `ZCODE_DIST_BIN_DIR`, respectively.
-
-Existing Lite users should switch to the new build command, environment variables, and installer. Installation does not remove old Lite directories or migrate/delete session data.
-
-To test a packaged build locally, extract and run it directly without uploading or installing it:
-
-```bash
-zcode_version=$(node -p "require('./dist/zcode/latest.json').version")
-mkdir -p dist/zcode/debug
-tar -xzf "dist/zcode/releases/$zcode_version/zcode-$zcode_version.tar.gz" \
-  -C dist/zcode/debug
-# Start the TUI by default
-node dist/zcode/debug/zcode/bin/zcode.mjs
-
-# Start Web mode
-node dist/zcode/debug/zcode/bin/zcode.mjs --web \
-  --workspace "$PWD" --port 3030 --no-open
-```
-
-Open `http://127.0.0.1:3030` to validate the complete flow, with one backend serving the Web pages and running the Agent. The port must be available; if `pnpm dev:web` is already running, choose another `--port`.
-
-## Repository Structure
-
-| Directory                                            | Responsibility                                                                          |
-| ---------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `packages/desktop`                                   | Electron Main, Host, Renderer, and desktop packaging                                    |
-| `packages/web`                                       | Web client                                                                              |
-| `packages/server`                                    | HTTP / WebSocket services and remote connections                                        |
-| `packages/zcode-server-cli`                          | Standalone server startup and process management                                        |
-| `packages/ui`                                        | Shared React components, hooks, and Zustand state                                       |
-| `packages/services`                                  | Business services and persistence                                                       |
-| `packages/shared`, `packages/rpc`, `packages/client` | Shared protocols and types, RPC framework, and Agent client SDK                         |
-| `packages/provider`, `packages/provider-node`        | Common provider capabilities and Node implementations                                   |
-| `apps/zcode-cli`                                     | Agent CLI, TUI, runtime, and tools                                                      |
-| `scripts`, `config`, `third-party`                   | Build and maintenance scripts, built-in configuration, and third-party notice materials |
-
-## Project Notice
-
-See [NOTICE.md](NOTICE.md) for feature and promotion scope, maintenance policy, execution and data risks, licensing, and third-party copyright information.
+First-party desktop code follows the upstream [ZCode](https://github.com/zai-org/ZCode) Apache-2.0 license; the PCB-Wish plugin is MIT; third-party components retain their own licenses. Design execution relies on LCEDA Pro, and lectures are typeset with XeLaTeX. Thanks to the FlexiHeal client for the real task book, acceptance feedback, and revision suggestions.
