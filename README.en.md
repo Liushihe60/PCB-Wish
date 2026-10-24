@@ -137,3 +137,5 @@ The current lecture has one overview chapter plus seven functional-module chapte
 ## License and acknowledgements
 
 First-party desktop code follows the upstream [ZCode](https://github.com/zai-org/ZCode) Apache-2.0 license; the PCB-Wish plugin is MIT; third-party components retain their own licenses. Design execution relies on LCEDA Pro, and lectures are typeset with XeLaTeX. Thanks to the FlexiHeal client for the real task book, acceptance feedback, and revision suggestions.
+
+Constrained by time and funding, the project is still a work in progress with much room for improvement. I sincerely hope it can genuinely help students learning electronic design, myself included. If the opportunity arises, I hope to keep improving it.
