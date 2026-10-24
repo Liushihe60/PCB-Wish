@@ -19,11 +19,11 @@ PCB-Wish is a desktop agent system for PCB design. Users describe a hardware goa
 
 The project is a task-specific modification of the ZCode open-source framework. The domain plugin lives in `apps/zcode-cli/packages/pcb-wish-plugin/`, and design execution relies on LCEDA Pro (JLCEDA Professional Edition).
 
+JLC is a domestic PCB platform whose EDA scope matches this project's sweet spot; its ecosystem includes an open-source community and the LCSC mall for one-stop fabrication. The agent fully integrates JLC's official mall and EDA APIs—selecting parts from LCSC, then drawing schematics, PCBs, and routing in JLCEDA—covering the full stack from selection to fabrication files. ZCode, a domestic open-source project, provides a complete agent framework that made development faster and easier; its native environment and user interaction, combined with JLC's ecosystem, enable basic wish-style development.
+
 ## Background
 
 Users describe a target board of modest drawing difficulty in natural language. The agent works in stages to complete requirement clarification, component selection, schematic and PCB drawing, and verification, then exports fabrication-ready engineering files. It also produces an accompanying lecture when the user explicitly requests one. The board design and delivery workflow uses only domestic production tools: the desktop application is a task-specific modification of the ZCode open-source framework, and design execution uses LCEDA Pro.
-
-JLC is a domestic PCB platform, and the scope of its EDA is exactly this project's sweet spot. Its ecosystem is also fairly complete, including an open-source community and the LCSC mall, and can provide one-stop board fabrication. The agent's development workflow therefore fully integrates JLC's official mall API and EDA API: it can select components from LCSC, then draw schematics and PCBs and complete routing in JLCEDA, covering the full stack from selection to fabrication files. As a domestic open-source project, ZCode provides a complete agent framework; building on that open-source framework let the author develop a complete agent faster and more conveniently. ZCode's native environment and its interaction with the user, combined with JLC's complete ecosystem, make a basic form of wish-style development possible.
 
 PCB-Wish was inspired by the full teaching process of the Engineering Innovation (工科创) course. The course already covers electronic design and board drawing, but cannot cover everyone's needs and interests.
 
